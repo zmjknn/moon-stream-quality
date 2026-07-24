@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/cli"
+
+import {
+  "zmjknn/moon-stream-quality/src/core",
+}
+
+// Values
+pub fn generate_benchmark_order_stream(Int, base_timestamp? : Int64) -> Array[@core.StreamEvent]
+
+pub fn generate_benchmark_sensor_stream(Int, base_timestamp? : Int64) -> Array[@core.StreamEvent]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

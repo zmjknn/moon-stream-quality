@@ -1,0 +1,41 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/report"
+
+import {
+  "moonbitlang/core/debug",
+  "zmjknn/moon-stream-quality/src/core",
+  "zmjknn/moon-stream-quality/src/engine",
+}
+
+// Values
+pub fn calculate_quality_score(DimensionalMetrics, weights? : ScoreWeights) -> Double
+
+pub fn compute_metrics_from_summary(@engine.PipelineBatchSummary, schema_errors_count? : Int) -> DimensionalMetrics
+
+pub fn format_json_report(@engine.PipelineBatchSummary, DimensionalMetrics, Double) -> String
+
+pub fn format_markdown_report(@engine.PipelineBatchSummary, DimensionalMetrics, Double, Array[@core.StreamEvent]) -> String
+
+// Errors
+
+// Types and methods
+pub(all) struct DimensionalMetrics {
+  completeness_score : Double
+  uniqueness_score : Double
+  validity_score : Double
+  timeliness_score : Double
+} derive(Eq, @debug.Debug)
+pub fn DimensionalMetrics::new(completeness_score? : Double, uniqueness_score? : Double, validity_score? : Double, timeliness_score? : Double) -> Self
+
+pub(all) struct ScoreWeights {
+  w_completeness : Double
+  w_uniqueness : Double
+  w_validity : Double
+  w_timeliness : Double
+} derive(Eq, @debug.Debug)
+pub fn ScoreWeights::default() -> Self
+
+// Type aliases
+
+// Traits
+

@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 /// Dynamic Value representation for stream record attributes.
 pub(all) enum Value {
   Null
@@ -13,8 +14,9 @@ pub(all) enum Value {
   Timestamp(Int64) // Unix timestamp in milliseconds
   Array(Array[Value])
   Map(Map[String, Value])
-} derive(Eq)
+} derive(Eq, Debug)
 
+///|
 /// Returns true if the Value is Null.
 pub fn Value::is_null(self : Value) -> Bool {
   match self {
@@ -23,6 +25,7 @@ pub fn Value::is_null(self : Value) -> Bool {
   }
 }
 
+///|
 /// Returns true if the Value is a boolean.
 pub fn Value::is_bool(self : Value) -> Bool {
   match self {
@@ -31,6 +34,7 @@ pub fn Value::is_bool(self : Value) -> Bool {
   }
 }
 
+///|
 /// Returns true if the Value is an integer.
 pub fn Value::is_int(self : Value) -> Bool {
   match self {
@@ -39,6 +43,7 @@ pub fn Value::is_int(self : Value) -> Bool {
   }
 }
 
+///|
 /// Returns true if the Value is a double/float.
 pub fn Value::is_double(self : Value) -> Bool {
   match self {
@@ -47,6 +52,7 @@ pub fn Value::is_double(self : Value) -> Bool {
   }
 }
 
+///|
 /// Returns true if the Value is a numeric type (Int or Double).
 pub fn Value::is_number(self : Value) -> Bool {
   match self {
@@ -55,6 +61,7 @@ pub fn Value::is_number(self : Value) -> Bool {
   }
 }
 
+///|
 /// Returns true if the Value is a string.
 pub fn Value::is_string(self : Value) -> Bool {
   match self {
@@ -63,6 +70,7 @@ pub fn Value::is_string(self : Value) -> Bool {
   }
 }
 
+///|
 /// Returns true if the Value is a timestamp.
 pub fn Value::is_timestamp(self : Value) -> Bool {
   match self {
@@ -71,6 +79,7 @@ pub fn Value::is_timestamp(self : Value) -> Bool {
   }
 }
 
+///|
 /// Returns true if the Value is an array.
 pub fn Value::is_array(self : Value) -> Bool {
   match self {
@@ -79,6 +88,7 @@ pub fn Value::is_array(self : Value) -> Bool {
   }
 }
 
+///|
 /// Returns true if the Value is a map.
 pub fn Value::is_map(self : Value) -> Bool {
   match self {
@@ -87,35 +97,30 @@ pub fn Value::is_map(self : Value) -> Bool {
   }
 }
 
+///|
 /// Converts the value to a Double representation if possible.
 pub fn Value::as_double(self : Value) -> Double? {
   match self {
     Int(i) => Some(i.to_double())
     Double(d) => Some(d)
-    String(s) => try {
-      Some(@string.parse_double(s))
-    } catch {
-      _ => None
-    }
+    String(s) => Some(@string.parse_double(s)) catch { _ => None }
     _ => None
   }
 }
 
+///|
 /// Converts the value to Int64 if possible.
 pub fn Value::as_int(self : Value) -> Int64? {
   match self {
     Int(i) => Some(i)
     Double(d) => Some(d.to_int64())
-    String(s) => try {
-      Some(@string.parse_int64(s))
-    } catch {
-      _ => None
-    }
+    String(s) => Some(@string.parse_int64(s)) catch { _ => None }
     Timestamp(ts) => Some(ts)
     _ => None
   }
 }
 
+///|
 /// Converts the value to String representation.
 pub fn Value::as_string(self : Value) -> String? {
   match self {
@@ -128,6 +133,7 @@ pub fn Value::as_string(self : Value) -> String? {
   }
 }
 
+///|
 /// Converts the value to a boolean if possible.
 pub fn Value::as_bool(self : Value) -> Bool? {
   match self {
@@ -145,6 +151,7 @@ pub fn Value::as_bool(self : Value) -> Bool? {
   }
 }
 
+///|
 /// Human-readable type name of the value.
 pub fn Value::type_name(self : Value) -> String {
   match self {
@@ -160,6 +167,7 @@ pub fn Value::type_name(self : Value) -> String {
   }
 }
 
+///|
 /// Formats the Value into string representation.
 pub fn Value::to_string(self : Value) -> String {
   match self {
@@ -195,21 +203,62 @@ pub fn Value::to_string(self : Value) -> String {
   }
 }
 
+///|
 /// Compares two values for ordering when supported.
 pub fn Value::compare(self : Value, other : Value) -> Int? {
   match (self, other) {
-    (Int(a), Int(b)) => if a < b { Some(-1) } else if a > b { Some(1) } else { Some(0) }
-    (Double(a), Double(b)) => if a < b { Some(-1) } else if a > b { Some(1) } else { Some(0) }
+    (Int(a), Int(b)) =>
+      if a < b {
+        Some(-1)
+      } else if a > b {
+        Some(1)
+      } else {
+        Some(0)
+      }
+    (Double(a), Double(b)) =>
+      if a < b {
+        Some(-1)
+      } else if a > b {
+        Some(1)
+      } else {
+        Some(0)
+      }
     (Int(a), Double(b)) => {
       let ad = a.to_double()
-      if ad < b { Some(-1) } else if ad > b { Some(1) } else { Some(0) }
+      if ad < b {
+        Some(-1)
+      } else if ad > b {
+        Some(1)
+      } else {
+        Some(0)
+      }
     }
     (Double(a), Int(b)) => {
       let bd = b.to_double()
-      if a < bd { Some(-1) } else if a > bd { Some(1) } else { Some(0) }
+      if a < bd {
+        Some(-1)
+      } else if a > bd {
+        Some(1)
+      } else {
+        Some(0)
+      }
     }
-    (String(a), String(b)) => if a < b { Some(-1) } else if a > b { Some(1) } else { Some(0) }
-    (Timestamp(a), Timestamp(b)) => if a < b { Some(-1) } else if a > b { Some(1) } else { Some(0) }
+    (String(a), String(b)) =>
+      if a < b {
+        Some(-1)
+      } else if a > b {
+        Some(1)
+      } else {
+        Some(0)
+      }
+    (Timestamp(a), Timestamp(b)) =>
+      if a < b {
+        Some(-1)
+      } else if a > b {
+        Some(1)
+      } else {
+        Some(0)
+      }
     _ => None
   }
 }

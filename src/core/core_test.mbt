@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 test "value conversions" {
   let v_int = Value::Int(100L)
   assert_eq(v_int.as_double(), Some(100.0))
@@ -14,6 +15,7 @@ test "value conversions" {
   assert_eq(v_str.is_string(), true)
 }
 
+///|
 test "event payload operations" {
   let payload : Map[String, Value] = Map([])
   payload.set("user_id", Value::Int(1001L))
@@ -30,6 +32,7 @@ test "event payload operations" {
   assert_eq(event.get_string("email"), Some("alice@example.com"))
 }
 
+///|
 test "stream context watermark" {
   let ctx = StreamContext::new(batch_id="b-1")
   ctx.update_watermark(100L)

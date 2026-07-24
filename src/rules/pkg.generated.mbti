@@ -1,0 +1,283 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/rules"
+
+import {
+  "moonbitlang/core/debug",
+  "zmjknn/moon-stream-quality/src/core",
+}
+
+// Values
+pub fn hash_string(String) -> Int64
+
+pub fn is_valid_email(String) -> Bool
+
+pub fn is_valid_ipv4(String) -> Bool
+
+pub fn is_valid_uuid(String) -> Bool
+
+pub fn matches_custom_prefix_suffix(String, String) -> Bool
+
+// Errors
+
+// Types and methods
+pub(all) enum AggMetric {
+  Sum
+  Count
+  Mean
+  Variance
+  StdDev
+  Min
+  Max
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ChronologyRule {
+  rule_id : String
+  rule_name : String
+  max_lateness_ms : Int64
+  mut last_timestamp : Int64
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn ChronologyRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn ChronologyRule::new(String, max_lateness_ms? : Int64, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) struct ChronologyTracker {
+  mut max_timestamp : Int64
+  mut total_events : Int64
+  mut out_of_order_events : Int64
+  mut total_lag_ms : Int64
+} derive(Eq, @debug.Debug)
+pub fn ChronologyTracker::new() -> Self
+pub fn ChronologyTracker::out_of_order_ratio(Self) -> Double
+pub fn ChronologyTracker::record(Self, Int64) -> Unit
+
+pub(all) struct CompletenessRule {
+  rule_id : String
+  rule_name : String
+  target_field : String
+  allow_empty_string : Bool
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn CompletenessRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn CompletenessRule::new(String, String, allow_empty_string? : Bool, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) struct CorrelationRule {
+  rule_id : String
+  rule_name : String
+  field_x : String
+  field_y : String
+  min_correlation : Double?
+  max_correlation : Double?
+  tracker : CorrelationTracker
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn CorrelationRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn CorrelationRule::new(String, String, String, min_correlation? : Double?, max_correlation? : Double?, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) struct CorrelationTracker {
+  field_x : String
+  field_y : String
+  mut count : Int64
+  mut mean_x : Double
+  mut mean_y : Double
+  mut c_xy : Double
+  mut var_x : Double
+  mut var_y : Double
+} derive(Eq, @debug.Debug)
+pub fn CorrelationTracker::correlation(Self) -> Double
+pub fn CorrelationTracker::covariance(Self) -> Double
+pub fn CorrelationTracker::new(String, String) -> Self
+pub fn CorrelationTracker::update(Self, Double, Double) -> Unit
+
+pub(all) enum CrossFieldComparisonOp {
+  Gt
+  Gte
+  Lt
+  Lte
+  Eq
+  Neq
+} derive(Eq, @debug.Debug)
+
+pub(all) struct CrossFieldRule {
+  rule_id : String
+  rule_name : String
+  field_a : String
+  op : CrossFieldComparisonOp
+  field_b : String
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn CrossFieldRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn CrossFieldRule::new(String, String, CrossFieldComparisonOp, String, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) struct EmaAnomalyRule {
+  rule_id : String
+  target_field : String
+  alpha : Double
+  threshold_pct : Double
+  mut current_ema : Double
+  mut initialized : Bool
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn EmaAnomalyRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn EmaAnomalyRule::new(String, String, alpha? : Double, threshold_pct? : Double, severity? : RuleSeverity) -> Self
+
+pub(all) struct FrequencyRule {
+  rule_id : String
+  rule_name : String
+  window_ms : Int64
+  max_events_per_window : Int
+  min_events_per_window : Int
+  mut timestamps : Array[Int64]
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn FrequencyRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn FrequencyRule::new(String, window_ms? : Int64, max_events_per_window? : Int, min_events_per_window? : Int, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) struct OutlierRule {
+  rule_id : String
+  target_field : String
+  max_z_score : Double
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn OutlierRule::evaluate(Self, @core.StreamEvent, Double, Double) -> RuleResult
+pub fn OutlierRule::new(String, String, max_z_score? : Double, severity? : RuleSeverity) -> Self
+
+pub(all) struct RangeRule {
+  rule_id : String
+  rule_name : String
+  target_field : String
+  min_val : Double?
+  max_val : Double?
+  include_min : Bool
+  include_max : Bool
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn RangeRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn RangeRule::new(String, String, min_val? : Double?, max_val? : Double?, include_min? : Bool, include_max? : Bool, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) enum RegexFormatKind {
+  EmailFormat
+  UUIDFormat
+  IPv4Format
+  ISO8601Format
+  CustomPattern(String)
+} derive(Eq, @debug.Debug)
+
+pub(all) struct RegexRule {
+  rule_id : String
+  rule_name : String
+  target_field : String
+  format_kind : RegexFormatKind
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn RegexRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn RegexRule::new(String, String, RegexFormatKind, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) struct RuleResult {
+  rule_id : String
+  rule_name : String
+  passed : Bool
+  severity : RuleSeverity
+  target_field : String
+  message : String
+  sample_value : String
+  execution_time_ns : Int64
+} derive(Eq, @debug.Debug)
+pub fn RuleResult::new(String, String, Bool, severity? : RuleSeverity, target_field? : String, message? : String, sample_value? : String, execution_time_ns? : Int64) -> Self
+
+pub(all) enum RuleSeverity {
+  Info
+  Warning
+  Error
+  Critical
+} derive(Eq, @debug.Debug)
+pub fn RuleSeverity::to_string(Self) -> String
+
+pub(all) struct SkewnessRule {
+  rule_id : String
+  target_field : String
+  max_allowed_skewness : Double
+  tracker : StatisticalTracker
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn SkewnessRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn SkewnessRule::new(String, String, max_allowed_skewness? : Double, severity? : RuleSeverity) -> Self
+
+pub(all) struct SlidingBloomFilter {
+  bit_set : Array[Bool]
+  capacity : Int
+  mut inserted_count : Int64
+} derive(Eq, @debug.Debug)
+pub fn SlidingBloomFilter::add(Self, String) -> Unit
+pub fn SlidingBloomFilter::clear(Self) -> Unit
+pub fn SlidingBloomFilter::contains(Self, String) -> Bool
+pub fn SlidingBloomFilter::new(capacity? : Int) -> Self
+
+pub(all) struct StatisticalTracker {
+  target_field : String
+  mut count : Int64
+  mut mean : Double
+  mut m2 : Double
+  mut m3 : Double
+  mut m4 : Double
+} derive(Eq, @debug.Debug)
+pub fn StatisticalTracker::new(String) -> Self
+pub fn StatisticalTracker::skewness(Self) -> Double
+pub fn StatisticalTracker::std_dev(Self) -> Double
+pub fn StatisticalTracker::update(Self, Double) -> Unit
+pub fn StatisticalTracker::variance(Self) -> Double
+
+pub(all) struct StreamCompletenessTracker {
+  target_field : String
+  mut total_count : Int64
+  mut valid_count : Int64
+  mut missing_count : Int64
+  mut null_count : Int64
+  mut empty_str_count : Int64
+} derive(Eq, @debug.Debug)
+pub fn StreamCompletenessTracker::completeness_ratio(Self) -> Double
+pub fn StreamCompletenessTracker::new(String) -> Self
+pub fn StreamCompletenessTracker::record(Self, @core.StreamEvent, allow_empty? : Bool) -> Unit
+
+pub(all) struct UniquenessRule {
+  rule_id : String
+  rule_name : String
+  target_fields : Array[String]
+  bloom_filter : SlidingBloomFilter
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn UniquenessRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn UniquenessRule::new(String, Array[String], capacity? : Int, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) struct WindowAggregationRule {
+  rule_id : String
+  rule_name : String
+  target_field : String
+  metric : AggMetric
+  aggregator : WindowAggregator
+  min_threshold : Double?
+  max_threshold : Double?
+  severity : RuleSeverity
+} derive(Eq, @debug.Debug)
+pub fn WindowAggregationRule::evaluate(Self, @core.StreamEvent) -> RuleResult
+pub fn WindowAggregationRule::new(String, String, AggMetric, window_kind? : WindowKind, min_threshold? : Double?, max_threshold? : Double?, severity? : RuleSeverity, rule_name? : String) -> Self
+
+pub(all) struct WindowAggregator {
+  target_field : String
+  window_kind : WindowKind
+  mut values : Array[Double]
+  mut timestamps : Array[Int64]
+} derive(Eq, @debug.Debug)
+pub fn WindowAggregator::add_event(Self, @core.StreamEvent) -> Unit
+pub fn WindowAggregator::compute_metric(Self, AggMetric) -> Double
+pub fn WindowAggregator::new(String, window_kind? : WindowKind) -> Self
+
+pub(all) enum WindowKind {
+  Tumbling(Int64)
+  Sliding(Int64, Int64)
+  CountWindow(Int)
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+

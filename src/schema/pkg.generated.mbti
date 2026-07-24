@@ -1,0 +1,57 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/schema"
+
+import {
+  "moonbitlang/core/debug",
+  "zmjknn/moon-stream-quality/src/core",
+}
+
+// Values
+pub fn infer_schema(String, Array[@core.StreamEvent]) -> Schema
+
+// Errors
+
+// Types and methods
+pub(all) struct FieldDef {
+  name : String
+  field_type : FieldType
+  nullable : Bool
+  default_val : @core.Value?
+  description : String
+} derive(Eq, @debug.Debug)
+pub fn FieldDef::new(String, FieldType, nullable? : Bool, default_val? : @core.Value?, description? : String) -> Self
+pub fn FieldDef::validate_value(Self, @core.Value) -> Bool
+
+pub(all) enum FieldType {
+  IntType
+  DoubleType
+  StringType
+  BoolType
+  TimestampType
+  ArrayType(FieldType)
+  MapType
+  AnyType
+} derive(Eq, @debug.Debug)
+pub fn FieldType::to_string(Self) -> String
+
+pub(all) struct Schema {
+  schema_id : String
+  fields : Map[String, FieldDef]
+  strict_mode : Bool
+} derive(Eq, @debug.Debug)
+pub fn Schema::add_field(Self, FieldDef) -> Unit
+pub fn Schema::get_field(Self, String) -> FieldDef?
+pub fn Schema::new(String, strict_mode? : Bool) -> Self
+pub fn Schema::validate_event(Self, @core.StreamEvent) -> Array[SchemaValidationError]
+
+pub(all) struct SchemaValidationError {
+  field_name : String
+  expected_type : String
+  actual_value : String
+  reason : String
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+

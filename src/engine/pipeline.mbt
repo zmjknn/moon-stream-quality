@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 /// Evaluation result for a single event flowing through the quality pipeline.
 pub(all) struct PipelineEventResult {
   event_id : String
@@ -12,6 +13,7 @@ pub(all) struct PipelineEventResult {
   failed_rules_count : Int
 } derive(Eq, Debug)
 
+///|
 /// Stream Pipeline batch evaluation summary.
 pub(all) struct PipelineBatchSummary {
   batch_id : String
@@ -23,6 +25,7 @@ pub(all) struct PipelineBatchSummary {
   pass_rate : Double
 } derive(Eq, Debug)
 
+///|
 /// Stream Quality Pipeline orchestrating schema enforcement & rule execution.
 pub(all) struct StreamPipeline {
   pipeline_name : String
@@ -33,11 +36,12 @@ pub(all) struct StreamPipeline {
   failed_samples : Array[@core.StreamEvent]
 } derive(Eq, Debug)
 
+///|
 /// Creates a new StreamPipeline.
 pub fn StreamPipeline::new(
   pipeline_name : String,
-  schema~ : @schema.Schema? = None,
-  sample_limit~ : Int = 100
+  schema? : @schema.Schema? = None,
+  sample_limit? : Int = 100,
 ) -> StreamPipeline {
   {
     pipeline_name,
@@ -49,20 +53,26 @@ pub fn StreamPipeline::new(
   }
 }
 
+///|
 /// Sets the schema for the pipeline.
-pub fn StreamPipeline::set_schema(self : StreamPipeline, schema : @schema.Schema) -> Unit {
+pub fn StreamPipeline::set_schema(
+  self : StreamPipeline,
+  schema : @schema.Schema,
+) -> Unit {
   self.schema = Some(schema)
 }
 
+///|
 /// Returns the internal rule registry.
 pub fn StreamPipeline::get_registry(self : StreamPipeline) -> RuleRegistry {
   self.registry
 }
 
+///|
 /// Processes a single StreamEvent through schema and rules.
 pub fn StreamPipeline::process_event(
   self : StreamPipeline,
-  event : @core.StreamEvent
+  event : @core.StreamEvent,
 ) -> PipelineEventResult {
   self.context.inc_events()
   self.context.update_watermark(event.timestamp)
@@ -108,10 +118,11 @@ pub fn StreamPipeline::process_event(
   }
 }
 
+///|
 /// Processes a batch of events and returns summary metrics.
 pub fn StreamPipeline::process_batch(
   self : StreamPipeline,
-  events : Array[@core.StreamEvent]
+  events : Array[@core.StreamEvent],
 ) -> PipelineBatchSummary {
   let batch_id = self.context.current_batch_id
   let mut passed_events = 0L
@@ -121,7 +132,8 @@ pub fn StreamPipeline::process_batch(
 
   for i = 0; i < events.length(); i = i + 1 {
     let res = self.process_event(events[i])
-    total_rule_evals = total_rule_evals + (res.passed_rules_count + res.failed_rules_count).to_int64()
+    total_rule_evals = total_rule_evals +
+      (res.passed_rules_count + res.failed_rules_count).to_int64()
     total_rule_fails = total_rule_fails + res.failed_rules_count.to_int64()
 
     if res.passed {
@@ -132,7 +144,11 @@ pub fn StreamPipeline::process_batch(
   }
 
   let total = events.length().to_int64()
-  let pass_rate = if total == 0L { 1.0 } else { passed_events.to_double() / total.to_double() }
+  let pass_rate = if total == 0L {
+    1.0
+  } else {
+    passed_events.to_double() / total.to_double()
+  }
 
   {
     batch_id,

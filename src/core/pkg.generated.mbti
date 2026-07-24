@@ -1,0 +1,87 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/core"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct EventMeta {
+  source_id : String
+  partition : Int
+  offset : Int64
+  ingest_timestamp : Int64
+  attributes : Map[String, String]
+} derive(Eq, @debug.Debug)
+pub fn EventMeta::new(source_id? : String, partition? : Int, offset? : Int64, ingest_timestamp? : Int64) -> Self
+
+pub(all) struct StreamContext {
+  mut watermark : Int64
+  mut total_events_processed : Int64
+  mut total_errors_encountered : Int64
+  mut current_batch_id : String
+  properties : Map[String, String]
+} derive(Eq, @debug.Debug)
+pub fn StreamContext::get_property(Self, String) -> String?
+pub fn StreamContext::inc_errors(Self) -> Unit
+pub fn StreamContext::inc_events(Self) -> Unit
+pub fn StreamContext::new(batch_id? : String) -> Self
+pub fn StreamContext::reset(Self, String) -> Unit
+pub fn StreamContext::set_property(Self, String, String) -> Unit
+pub fn StreamContext::update_watermark(Self, Int64) -> Unit
+
+pub(all) struct StreamEvent {
+  event_id : String
+  timestamp : Int64
+  event_type : String
+  payload : Map[String, Value]
+  meta : EventMeta
+} derive(Eq, @debug.Debug)
+pub fn StreamEvent::contains_key(Self, String) -> Bool
+pub fn StreamEvent::field_count(Self) -> Int
+pub fn StreamEvent::get(Self, String) -> Value?
+pub fn StreamEvent::get_bool(Self, String) -> Bool?
+pub fn StreamEvent::get_double(Self, String) -> Double?
+pub fn StreamEvent::get_int(Self, String) -> Int64?
+pub fn StreamEvent::get_string(Self, String) -> String?
+pub fn StreamEvent::has_field(Self, String) -> Bool
+pub fn StreamEvent::new(String, Int64, event_type? : String, payload? : Map[String, Value], meta? : EventMeta) -> Self
+pub fn StreamEvent::set(Self, String, Value) -> Unit
+pub fn StreamEvent::to_json_string(Self) -> String
+
+pub(all) enum Value {
+  Null
+  Bool(Bool)
+  Int(Int64)
+  Double(Double)
+  String(String)
+  Bytes(Bytes)
+  Timestamp(Int64)
+  Array(Array[Value])
+  Map(Map[String, Value])
+} derive(Eq, @debug.Debug)
+pub fn Value::as_bool(Self) -> Bool?
+pub fn Value::as_double(Self) -> Double?
+pub fn Value::as_int(Self) -> Int64?
+pub fn Value::as_string(Self) -> String?
+pub fn Value::compare(Self, Self) -> Int?
+pub fn Value::is_array(Self) -> Bool
+pub fn Value::is_bool(Self) -> Bool
+pub fn Value::is_double(Self) -> Bool
+pub fn Value::is_int(Self) -> Bool
+pub fn Value::is_map(Self) -> Bool
+pub fn Value::is_null(Self) -> Bool
+pub fn Value::is_number(Self) -> Bool
+pub fn Value::is_string(Self) -> Bool
+pub fn Value::is_timestamp(Self) -> Bool
+pub fn Value::to_string(Self) -> String
+pub fn Value::type_name(Self) -> String
+
+// Type aliases
+
+// Traits
+

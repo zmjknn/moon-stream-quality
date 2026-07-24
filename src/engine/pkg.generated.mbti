@@ -1,0 +1,85 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/engine"
+
+import {
+  "moonbitlang/core/debug",
+  "zmjknn/moon-stream-quality/src/core",
+  "zmjknn/moon-stream-quality/src/rules",
+  "zmjknn/moon-stream-quality/src/schema",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct PipelineBatchSummary {
+  batch_id : String
+  total_events : Int64
+  passed_events : Int64
+  failed_events : Int64
+  total_rule_evaluations : Int64
+  total_rule_failures : Int64
+  pass_rate : Double
+} derive(Eq, @debug.Debug)
+
+pub(all) struct PipelineEventResult {
+  event_id : String
+  passed : Bool
+  schema_errors : Array[@schema.SchemaValidationError]
+  rule_failures : Array[@rules.RuleResult]
+  passed_rules_count : Int
+  failed_rules_count : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) enum RuleItem {
+  Completeness(@rules.CompletenessRule)
+  Uniqueness(@rules.UniquenessRule)
+  Range(@rules.RangeRule)
+  Regex(@rules.RegexRule)
+  Chronology(@rules.ChronologyRule)
+  CrossField(@rules.CrossFieldRule)
+  WindowAgg(@rules.WindowAggregationRule)
+  Statistical(@rules.SkewnessRule)
+  Anomaly(@rules.EmaAnomalyRule)
+  Correlation(@rules.CorrelationRule)
+  Frequency(@rules.FrequencyRule)
+} derive(Eq, @debug.Debug)
+
+pub(all) struct RuleRegistry {
+  rules : Map[String, RuleItem]
+} derive(Eq, @debug.Debug)
+pub fn RuleRegistry::count(Self) -> Int
+pub fn RuleRegistry::evaluate_all(Self, @core.StreamEvent) -> Array[@rules.RuleResult]
+pub fn RuleRegistry::get_rule(Self, String) -> RuleItem?
+pub fn RuleRegistry::new() -> Self
+pub fn RuleRegistry::register_anomaly(Self, @rules.EmaAnomalyRule) -> Unit
+pub fn RuleRegistry::register_chronology(Self, @rules.ChronologyRule) -> Unit
+pub fn RuleRegistry::register_completeness(Self, @rules.CompletenessRule) -> Unit
+pub fn RuleRegistry::register_correlation(Self, @rules.CorrelationRule) -> Unit
+pub fn RuleRegistry::register_cross_field(Self, @rules.CrossFieldRule) -> Unit
+pub fn RuleRegistry::register_frequency(Self, @rules.FrequencyRule) -> Unit
+pub fn RuleRegistry::register_range(Self, @rules.RangeRule) -> Unit
+pub fn RuleRegistry::register_regex(Self, @rules.RegexRule) -> Unit
+pub fn RuleRegistry::register_statistical(Self, @rules.SkewnessRule) -> Unit
+pub fn RuleRegistry::register_uniqueness(Self, @rules.UniquenessRule) -> Unit
+pub fn RuleRegistry::register_window_agg(Self, @rules.WindowAggregationRule) -> Unit
+
+pub(all) struct StreamPipeline {
+  pipeline_name : String
+  mut schema : @schema.Schema?
+  registry : RuleRegistry
+  context : @core.StreamContext
+  sample_limit : Int
+  failed_samples : Array[@core.StreamEvent]
+} derive(Eq, @debug.Debug)
+pub fn StreamPipeline::get_registry(Self) -> RuleRegistry
+pub fn StreamPipeline::new(String, schema? : @schema.Schema?, sample_limit? : Int) -> Self
+pub fn StreamPipeline::process_batch(Self, Array[@core.StreamEvent]) -> PipelineBatchSummary
+pub fn StreamPipeline::process_event(Self, @core.StreamEvent) -> PipelineEventResult
+pub fn StreamPipeline::set_schema(Self, @schema.Schema) -> Unit
+
+// Type aliases
+
+// Traits
+

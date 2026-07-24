@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 /// Schema validation failure detail.
 pub(all) struct SchemaValidationError {
   field_name : String
@@ -10,6 +11,7 @@ pub(all) struct SchemaValidationError {
   reason : String
 } derive(Eq, Debug)
 
+///|
 /// Event Schema containing list of expected fields and strictness mode.
 pub(all) struct Schema {
   schema_id : String
@@ -17,35 +19,36 @@ pub(all) struct Schema {
   strict_mode : Bool // If true, unknown fields fail validation
 } derive(Eq, Debug)
 
+///|
 /// Creates a new Schema.
-pub fn Schema::new(
-  schema_id : String,
-  strict_mode~ : Bool = false
-) -> Schema {
+pub fn Schema::new(schema_id : String, strict_mode? : Bool = false) -> Schema {
   { schema_id, fields: Map([]), strict_mode }
 }
 
+///|
 /// Adds a field definition to Schema.
 pub fn Schema::add_field(self : Schema, field_def : FieldDef) -> Unit {
   self.fields.set(field_def.name, field_def)
 }
 
+///|
 /// Gets a field definition by name.
 pub fn Schema::get_field(self : Schema, field_name : String) -> FieldDef? {
   self.fields.get(field_name)
 }
 
+///|
 /// Validates a StreamEvent against this Schema.
 pub fn Schema::validate_event(
   self : Schema,
-  event : @core.StreamEvent
+  event : @core.StreamEvent,
 ) -> Array[SchemaValidationError] {
   let errors : Array[SchemaValidationError] = []
 
   // Check required fields & field types
   self.fields.each(fn(name, field_def) {
     match event.get(name) {
-      Some(val) => {
+      Some(val) =>
         if !field_def.validate_value(val) {
           errors.push({
             field_name: name,
@@ -54,8 +57,7 @@ pub fn Schema::validate_event(
             reason: "Type mismatch or non-nullable field was null",
           })
         }
-      }
-      None => {
+      None =>
         if !field_def.nullable {
           errors.push({
             field_name: name,
@@ -64,7 +66,6 @@ pub fn Schema::validate_event(
             reason: "Required non-nullable field is missing from event",
           })
         }
-      }
     }
   })
 
@@ -72,14 +73,13 @@ pub fn Schema::validate_event(
   if self.strict_mode {
     event.payload.each(fn(k, v) {
       match self.fields.get(k) {
-        None => {
+        None =>
           errors.push({
             field_name: k,
             expected_type: "undefined",
             actual_value: v.to_string(),
             reason: "Unknown field in strict schema mode",
           })
-        }
         Some(_) => ()
       }
     })
@@ -88,8 +88,12 @@ pub fn Schema::validate_event(
   errors
 }
 
+///|
 /// Infers a Schema from an array of sample events.
-pub fn infer_schema(schema_id : String, events : Array[@core.StreamEvent]) -> Schema {
+pub fn infer_schema(
+  schema_id : String,
+  events : Array[@core.StreamEvent],
+) -> Schema {
   let schema = Schema::new(schema_id)
   let field_types : Map[String, FieldType] = Map([])
   let field_nullability : Map[String, Bool] = Map([])
@@ -123,11 +127,10 @@ pub fn infer_schema(schema_id : String, events : Array[@core.StreamEvent]) -> Sc
       } else {
         match field_types.get(k) {
           None => field_types.set(k, inferred_type)
-          Some(existing) => {
+          Some(existing) =>
             if existing != inferred_type && existing != FieldType::AnyType {
               field_types.set(k, FieldType::AnyType)
             }
-          }
         }
       }
     })

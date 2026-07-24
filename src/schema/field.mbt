@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 /// Field Type enum representing expected data types.
 pub(all) enum FieldType {
   IntType
@@ -14,6 +15,7 @@ pub(all) enum FieldType {
   AnyType
 } derive(Eq, Debug)
 
+///|
 /// Human readable string representation of FieldType.
 pub fn FieldType::to_string(self : FieldType) -> String {
   match self {
@@ -28,6 +30,7 @@ pub fn FieldType::to_string(self : FieldType) -> String {
   }
 }
 
+///|
 /// Field definition containing name, type, nullability, and optional default.
 pub(all) struct FieldDef {
   name : String
@@ -37,17 +40,19 @@ pub(all) struct FieldDef {
   description : String
 } derive(Eq, Debug)
 
+///|
 /// Creates a new FieldDef.
 pub fn FieldDef::new(
   name : String,
   field_type : FieldType,
-  nullable~ : Bool = true,
-  default_val~ : @core.Value? = None,
-  description~ : String = ""
+  nullable? : Bool = true,
+  default_val? : @core.Value? = None,
+  description? : String = "",
 ) -> FieldDef {
   { name, field_type, nullable, default_val, description }
 }
 
+///|
 /// Checks if a Value matches this FieldDef specification.
 pub fn FieldDef::validate_value(self : FieldDef, val : @core.Value) -> Bool {
   if val.is_null() {

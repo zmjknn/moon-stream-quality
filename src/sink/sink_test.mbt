@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 test "alert trigger thresholds" {
   let cfg = AlertConfig::default()
 
@@ -30,6 +31,7 @@ test "alert trigger thresholds" {
   assert_eq(ok3, true)
 }
 
+///|
 test "prometheus metric exporter format" {
   let summary : @engine.PipelineBatchSummary = {
     batch_id: "b-0",
@@ -44,6 +46,12 @@ test "prometheus metric exporter format" {
   let metrics = @report.DimensionalMetrics::new()
   let prom = export_prometheus_metrics("test_pipe", summary, metrics, 95.0)
 
-  assert_eq(prom.contains("stream_quality_score{pipeline=\"test_pipe\"} 95"), true)
-  assert_eq(prom.contains("stream_events_processed_total{pipeline=\"test_pipe\"} 100"), true)
+  assert_eq(
+    prom.contains("stream_quality_score{pipeline=\"test_pipe\"} 95"),
+    true,
+  )
+  assert_eq(
+    prom.contains("stream_events_processed_total{pipeline=\"test_pipe\"} 100"),
+    true,
+  )
 }

@@ -2,10 +2,13 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 test "rule registry registration and count" {
   let reg = RuleRegistry::new()
   reg.register_completeness(@rules.CompletenessRule::new("c1", "user_id"))
-  reg.register_range(@rules.RangeRule::new("r1", "age", min_val=Some(0.0), max_val=Some(120.0)))
+  reg.register_range(
+    @rules.RangeRule::new("r1", "age", min_val=Some(0.0), max_val=Some(120.0)),
+  )
   reg.register_regex(@rules.RegexRule::new("re1", "email", EmailFormat))
 
   assert_eq(reg.count(), 3)
@@ -16,12 +19,20 @@ test "rule registry registration and count" {
   assert_eq(found, true)
 }
 
+///|
 test "stream pipeline batch processing" {
   let pipeline = StreamPipeline::new("test_pipeline")
   let reg = pipeline.get_registry()
 
   reg.register_completeness(@rules.CompletenessRule::new("c1", "device_id"))
-  reg.register_range(@rules.RangeRule::new("r1", "temp", min_val=Some(-50.0), max_val=Some(100.0)))
+  reg.register_range(
+    @rules.RangeRule::new(
+      "r1",
+      "temp",
+      min_val=Some(-50.0),
+      max_val=Some(100.0),
+    ),
+  )
 
   let p1 : Map[String, @core.Value] = Map([])
   p1.set("device_id", @core.Value::String("d1"))

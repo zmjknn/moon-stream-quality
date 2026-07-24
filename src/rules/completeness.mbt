@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 /// Completeness Rule checking missing fields, nulls, and empty strings.
 pub(all) struct CompletenessRule {
   rule_id : String
@@ -11,22 +12,28 @@ pub(all) struct CompletenessRule {
   severity : RuleSeverity
 } derive(Eq, Debug)
 
+///|
 /// Creates a new CompletenessRule.
 pub fn CompletenessRule::new(
   rule_id : String,
   target_field : String,
-  allow_empty_string~ : Bool = false,
-  severity~ : RuleSeverity = Error,
-  rule_name~ : String = ""
+  allow_empty_string? : Bool = false,
+  severity? : RuleSeverity = Error,
+  rule_name? : String = "",
 ) -> CompletenessRule {
-  let name = if rule_name == "" { "CompletenessCheck(" + target_field + ")" } else { rule_name }
+  let name = if rule_name == "" {
+    "CompletenessCheck(" + target_field + ")"
+  } else {
+    rule_name
+  }
   { rule_id, rule_name: name, target_field, allow_empty_string, severity }
 }
 
+///|
 /// Evaluates completeness rule on a stream event.
 pub fn CompletenessRule::evaluate(
   self : CompletenessRule,
-  event : @core.StreamEvent
+  event : @core.StreamEvent,
 ) -> RuleResult {
   match event.get(self.target_field) {
     None =>
@@ -39,7 +46,7 @@ pub fn CompletenessRule::evaluate(
         message="Required field is missing in stream event",
         sample_value="<missing>",
       )
-    Some(val) => {
+    Some(val) =>
       if val.is_null() {
         RuleResult::new(
           self.rule_id,
@@ -52,7 +59,7 @@ pub fn CompletenessRule::evaluate(
         )
       } else {
         match val {
-          String(s) => {
+          String(s) =>
             if !self.allow_empty_string && s.length() == 0 {
               RuleResult::new(
                 self.rule_id,
@@ -73,7 +80,6 @@ pub fn CompletenessRule::evaluate(
                 sample_value=val.to_string(),
               )
             }
-          }
           _ =>
             RuleResult::new(
               self.rule_id,
@@ -85,10 +91,10 @@ pub fn CompletenessRule::evaluate(
             )
         }
       }
-    }
   }
 }
 
+///|
 /// Stream Completeness Tracker for accumulated statistics across event batches.
 pub(all) struct StreamCompletenessTracker {
   target_field : String
@@ -99,8 +105,11 @@ pub(all) struct StreamCompletenessTracker {
   mut empty_str_count : Int64
 } derive(Eq, Debug)
 
+///|
 /// Creates a new StreamCompletenessTracker.
-pub fn StreamCompletenessTracker::new(target_field : String) -> StreamCompletenessTracker {
+pub fn StreamCompletenessTracker::new(
+  target_field : String,
+) -> StreamCompletenessTracker {
   {
     target_field,
     total_count: 0L,
@@ -111,36 +120,38 @@ pub fn StreamCompletenessTracker::new(target_field : String) -> StreamCompletene
   }
 }
 
+///|
 /// Record an event in tracker.
 pub fn StreamCompletenessTracker::record(
   self : StreamCompletenessTracker,
   event : @core.StreamEvent,
-  allow_empty~ : Bool = false
+  allow_empty? : Bool = false,
 ) -> Unit {
   self.total_count = self.total_count + 1L
   match event.get(self.target_field) {
     None => self.missing_count = self.missing_count + 1L
-    Some(val) => {
+    Some(val) =>
       if val.is_null() {
         self.null_count = self.null_count + 1L
       } else {
         match val {
-          String(s) => {
+          String(s) =>
             if !allow_empty && s.length() == 0 {
               self.empty_str_count = self.empty_str_count + 1L
             } else {
               self.valid_count = self.valid_count + 1L
             }
-          }
           _ => self.valid_count = self.valid_count + 1L
         }
       }
-    }
   }
 }
 
+///|
 /// Returns the completeness ratio (0.0 to 1.0).
-pub fn StreamCompletenessTracker::completeness_ratio(self : StreamCompletenessTracker) -> Double {
+pub fn StreamCompletenessTracker::completeness_ratio(
+  self : StreamCompletenessTracker,
+) -> Double {
   if self.total_count == 0L {
     1.0
   } else {

@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 /// Comparison operator between fields.
 pub(all) enum CrossFieldComparisonOp {
   Gt
@@ -12,6 +13,7 @@ pub(all) enum CrossFieldComparisonOp {
   Neq
 } derive(Eq, Debug)
 
+///|
 /// Cross Field Relational Rule checking field_a OP field_b.
 pub(all) struct CrossFieldRule {
   rule_id : String
@@ -22,14 +24,15 @@ pub(all) struct CrossFieldRule {
   severity : RuleSeverity
 } derive(Eq, Debug)
 
+///|
 /// Creates a new CrossFieldRule.
 pub fn CrossFieldRule::new(
   rule_id : String,
   field_a : String,
   op : CrossFieldComparisonOp,
   field_b : String,
-  severity~ : RuleSeverity = Error,
-  rule_name~ : String = ""
+  severity? : RuleSeverity = Error,
+  rule_name? : String = "",
 ) -> CrossFieldRule {
   let op_str = match op {
     Gt => ">"
@@ -39,12 +42,20 @@ pub fn CrossFieldRule::new(
     Eq => "=="
     Neq => "!="
   }
-  let name = if rule_name == "" { "CrossField(" + field_a + " " + op_str + " " + field_b + ")" } else { rule_name }
+  let name = if rule_name == "" {
+    "CrossField(" + field_a + " " + op_str + " " + field_b + ")"
+  } else {
+    rule_name
+  }
   { rule_id, rule_name: name, field_a, op, field_b, severity }
 }
 
+///|
 /// Evaluates cross-field relational constraint.
-pub fn CrossFieldRule::evaluate(self : CrossFieldRule, event : @core.StreamEvent) -> RuleResult {
+pub fn CrossFieldRule::evaluate(
+  self : CrossFieldRule,
+  event : @core.StreamEvent,
+) -> RuleResult {
   let val_a_opt = event.get(self.field_a)
   let val_b_opt = event.get(self.field_b)
 
@@ -65,7 +76,15 @@ pub fn CrossFieldRule::evaluate(self : CrossFieldRule, event : @core.StreamEvent
           let msg = if is_valid {
             ""
           } else {
-            "Cross-field check failed: " + self.field_a + " (" + va.to_string() + ") fails comparison with " + self.field_b + " (" + vb.to_string() + ")"
+            "Cross-field check failed: " +
+            self.field_a +
+            " (" +
+            va.to_string() +
+            ") fails comparison with " +
+            self.field_b +
+            " (" +
+            vb.to_string() +
+            ")"
           }
 
           RuleResult::new(

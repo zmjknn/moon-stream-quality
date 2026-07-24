@@ -1,0 +1,45 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/sink"
+
+import {
+  "moonbitlang/core/debug",
+  "zmjknn/moon-stream-quality/src/engine",
+  "zmjknn/moon-stream-quality/src/report",
+}
+
+// Values
+pub fn export_prometheus_metrics(String, @engine.PipelineBatchSummary, @report.DimensionalMetrics, Double) -> String
+
+// Errors
+
+// Types and methods
+pub(all) struct AlertConfig {
+  min_acceptable_score : Double
+  critical_score_threshold : Double
+  webhook_url : String
+} derive(Eq, @debug.Debug)
+pub fn AlertConfig::check_alert(Self, String, Double, Int64) -> AlertPayload?
+pub fn AlertConfig::default() -> Self
+
+pub(all) enum AlertLevel {
+  AlertWarning
+  AlertError
+  AlertCritical
+} derive(Eq, @debug.Debug)
+
+pub(all) struct AlertPayload {
+  alert_id : String
+  pipeline_name : String
+  level : AlertLevel
+  title : String
+  description : String
+  quality_score : Double
+  timestamp : Int64
+} derive(Eq, @debug.Debug)
+pub fn AlertPayload::new(String, String, AlertLevel, String, String, Double, Int64) -> Self
+pub fn AlertPayload::to_webhook_json(Self) -> String
+
+// Type aliases
+
+// Traits
+

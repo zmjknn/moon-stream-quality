@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 test "quality score calculation" {
   let metrics = DimensionalMetrics::new(
     completeness_score=100.0,
@@ -15,6 +16,7 @@ test "quality score calculation" {
   assert_eq(score, 92.5)
 }
 
+///|
 test "markdown report formatting" {
   let summary : @engine.PipelineBatchSummary = {
     batch_id: "batch-100",

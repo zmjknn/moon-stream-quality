@@ -2,6 +2,7 @@
 // Copyright 2026 zmjknn
 // Apache-2.0 License
 
+///|
 test "schema field validation" {
   let schema = Schema::new("user_schema", strict_mode=true)
   schema.add_field(FieldDef::new("id", FieldType::IntType, nullable=false))
@@ -20,12 +21,17 @@ test "schema field validation" {
   // Missing required field
   let invalid_payload : Map[String, @core.Value] = Map([])
   invalid_payload.set("name", @core.Value::String("Alice"))
-  let invalid_event = @core.StreamEvent::new("e2", 1001L, payload=invalid_payload)
+  let invalid_event = @core.StreamEvent::new(
+    "e2",
+    1001L,
+    payload=invalid_payload,
+  )
   let errs2 = schema.validate_event(invalid_event)
   assert_eq(errs2.length(), 1)
   assert_eq(errs2[0].field_name, "id")
 }
 
+///|
 test "schema inference" {
   let p1 : Map[String, @core.Value] = Map([])
   p1.set("device_id", @core.Value::String("sensor-01"))
@@ -42,8 +48,17 @@ test "schema inference" {
   ]
 
   let inferred = infer_schema("sensor_schema", events)
-  assert_eq(inferred.get_field("device_id").unwrap().field_type, FieldType::StringType)
-  assert_eq(inferred.get_field("temp").unwrap().field_type, FieldType::DoubleType)
-  assert_eq(inferred.get_field("humidity").unwrap().field_type, FieldType::DoubleType)
+  assert_eq(
+    inferred.get_field("device_id").unwrap().field_type,
+    FieldType::StringType,
+  )
+  assert_eq(
+    inferred.get_field("temp").unwrap().field_type,
+    FieldType::DoubleType,
+  )
+  assert_eq(
+    inferred.get_field("humidity").unwrap().field_type,
+    FieldType::DoubleType,
+  )
   assert_eq(inferred.get_field("humidity").unwrap().nullable, true)
 }
