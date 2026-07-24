@@ -1,0 +1,6 @@
+{
+  "import": [
+    "zmjknn/moon-stream-quality/src/engine",
+    "zmjknn/moon-stream-quality/src/report"
+  ]
+}
