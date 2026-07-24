@@ -1,0 +1,66 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/pipeline"
+
+import {
+  "moonbitlang/core/debug",
+  "zmjknn/moon-stream-quality/src/core",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct DeadLetterQueueManager {
+  capacity : Int
+  queue : Array[DlqEntry]
+  mut total_dropped : Int64
+} derive(Eq, @debug.Debug)
+pub fn DeadLetterQueueManager::get_retryable_entries(Self) -> Array[DlqEntry]
+pub fn DeadLetterQueueManager::mark_retried(Self, String) -> Unit
+pub fn DeadLetterQueueManager::new(capacity? : Int) -> Self
+pub fn DeadLetterQueueManager::push_failed_event(Self, @core.StreamEvent, String) -> Unit
+pub fn DeadLetterQueueManager::to_json_audit(Self) -> String
+
+pub(all) struct DlqEntry {
+  entry_id : String
+  event : @core.StreamEvent
+  reason : String
+  mut retry_count : Int
+  max_retries : Int
+  timestamp : Int64
+} derive(Eq, @debug.Debug)
+pub fn DlqEntry::new(String, @core.StreamEvent, String, max_retries? : Int, timestamp? : Int64) -> Self
+
+pub(all) struct MultiStreamJoinValidator {
+  left_stream_id : String
+  right_stream_id : String
+  join_key_field : String
+  join_kind : StreamJoinKind
+  left_buffer : Map[String, @core.StreamEvent]
+  right_buffer : Map[String, @core.StreamEvent]
+  max_skew_ms : Int64
+} derive(Eq, @debug.Debug)
+pub fn MultiStreamJoinValidator::ingest_left(Self, @core.StreamEvent) -> Unit
+pub fn MultiStreamJoinValidator::ingest_right(Self, @core.StreamEvent) -> Unit
+pub fn MultiStreamJoinValidator::new(String, String, String, join_kind? : StreamJoinKind, max_skew_ms? : Int64) -> Self
+pub fn MultiStreamJoinValidator::validate_join_integrity(Self) -> Array[StreamJoinViolation]
+
+pub(all) enum StreamJoinKind {
+  InnerJoin
+  LeftOuterJoin
+  WindowJoin(Int64)
+} derive(Eq, @debug.Debug)
+
+pub(all) struct StreamJoinViolation {
+  left_event_id : String
+  right_event_id : String
+  join_key : String
+  reason : String
+  skew_ms : Int64
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+

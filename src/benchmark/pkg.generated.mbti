@@ -1,0 +1,27 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/benchmark"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn run_financial_benchmark(Int) -> BenchmarkSuiteResult
+
+pub fn run_syslog_benchmark(Int) -> BenchmarkSuiteResult
+
+// Errors
+
+// Types and methods
+pub(all) struct BenchmarkSuiteResult {
+  workload_name : String
+  total_events : Int64
+  throughput_eps : Double
+  pass_rate : Double
+  quality_score : Double
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
