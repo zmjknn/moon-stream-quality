@@ -9,7 +9,7 @@ pub(all) struct StreamContext {
   mut total_errors_encountered : Int64
   mut current_batch_id : String
   properties : Map[String, String]
-}
+} derive(Eq, Debug)
 
 /// Creates a new StreamContext.
 pub fn StreamContext::new(batch_id~ : String = "batch-0") -> StreamContext {

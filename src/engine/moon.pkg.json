@@ -1,0 +1,7 @@
+{
+  "import": [
+    "zmjknn/moon-stream-quality/src/core",
+    "zmjknn/moon-stream-quality/src/schema",
+    "zmjknn/moon-stream-quality/src/rules"
+  ]
+}

@@ -9,7 +9,7 @@ pub(all) struct EventMeta {
   offset : Int64
   ingest_timestamp : Int64
   attributes : Map[String, String]
-} derive(Eq)
+} derive(Eq, Debug)
 
 /// Creates a new default EventMeta.
 pub fn EventMeta::new(
@@ -34,7 +34,7 @@ pub(all) struct StreamEvent {
   event_type : String
   payload : Map[String, Value]
   meta : EventMeta
-} derive(Eq)
+} derive(Eq, Debug)
 
 /// Creates a new StreamEvent.
 pub fn StreamEvent::new(
