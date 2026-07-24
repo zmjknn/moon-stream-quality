@@ -1,0 +1,79 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zmjknn/moon-stream-quality/src/parser"
+
+import {
+  "moonbitlang/core/debug",
+  "zmjknn/moon-stream-quality/src/core",
+}
+
+// Values
+pub fn apache_log_to_event(ApacheAccessLog, String) -> @core.StreamEvent
+
+pub fn auto_cast_value(String) -> @core.Value
+
+pub fn parse_apache_access_log(String) -> ApacheAccessLog?
+
+pub fn parse_csv_line(String, delimiter? : Char) -> Array[String]
+
+pub fn parse_csv_stream(Array[String], config? : CsvParserConfig) -> Array[@core.StreamEvent]
+
+pub fn parse_int64_safe(String) -> Int64?
+
+pub fn parse_json_event(String, String, timestamp? : Int64) -> @core.StreamEvent?
+
+pub fn parse_json_value(String) -> @core.Value?
+
+pub fn parse_logfmt_event(String, String, timestamp? : Int64) -> @core.StreamEvent
+
+pub fn parse_logfmt_line(String) -> Map[String, @core.Value]
+
+pub fn parse_syslog_rfc5424(String) -> SyslogMessage?
+
+pub fn syslog_to_event(SyslogMessage, String) -> @core.StreamEvent
+
+// Errors
+
+// Types and methods
+pub(all) struct ApacheAccessLog {
+  client_ip : String
+  identity : String
+  user : String
+  timestamp : String
+  http_method : String
+  request_path : String
+  http_version : String
+  status_code : Int
+  response_size : Int64
+  referrer : String
+  user_agent : String
+} derive(Eq, @debug.Debug)
+
+pub(all) struct CsvParserConfig {
+  delimiter : Char
+  has_header : Bool
+  trim_values : Bool
+} derive(Eq, @debug.Debug)
+pub fn CsvParserConfig::default() -> Self
+
+pub(all) struct JsonParseError {
+  position : Int
+  message : String
+} derive(Eq, @debug.Debug)
+
+pub(all) struct SyslogMessage {
+  priority : Int
+  facility : Int
+  severity : Int
+  version : Int
+  timestamp : String
+  hostname : String
+  app_name : String
+  proc_id : String
+  msg_id : String
+  msg : String
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
