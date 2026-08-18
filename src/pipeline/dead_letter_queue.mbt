@@ -86,6 +86,20 @@ pub fn DeadLetterQueueManager::mark_retried(
 }
 
 ///|
+/// Finds a stable DLQ entry by its audit identifier.
+pub fn DeadLetterQueueManager::find_entry(
+  self : DeadLetterQueueManager,
+  entry_id : String,
+) -> DlqEntry? {
+  for i = 0; i < self.queue.length(); i = i + 1 {
+    if self.queue[i].entry_id == entry_id {
+      return Some(self.queue[i])
+    }
+  }
+  None
+}
+
+///|
 /// Formats DLQ contents as JSON audit log.
 pub fn DeadLetterQueueManager::to_json_audit(
   self : DeadLetterQueueManager,
