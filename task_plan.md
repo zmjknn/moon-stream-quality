@@ -11,8 +11,8 @@
 - [completed] 3. 实现功能扩展、基准与边界测试
 - [completed] 4. README、CI、模块发布与验收文档完善
 - [completed] 5. 格式化、接口、全目标测试、CLI check 与基准复测（native Windows runtime 限制已记录）
-- [in_progress] 6. GitHub/Mooncakes 账号核验、提交与推送
-- [pending] 7. 推送后远程默认分支/CI/包状态复核与最终自查
+- [completed] 6. GitHub/Mooncakes 账号核验、提交与推送（GitLink 写权限由远端拒绝）
+- [completed] 7. 推送后远程默认分支/CI/包状态复核与最终自查（GitHub/Mooncakes 已完成）
 
 ## 约束与成功标准
 

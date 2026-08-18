@@ -17,10 +17,10 @@
 | CLI | 通过 | `moon run --target wasm-gc src/cli` |
 | 实测基准 | 通过 | `moon bench src/benchmark --target wasm-gc --release --deny-warn` |
 | CI | 已补齐 | Ubuntu/macOS/Windows；全 target check/test、fmt/info 漂移检查 |
-| Mooncakes 发布 | 已配置 | 手动 `publish.yml`，使用 `MOONCAKES_TOKEN` secret |
+| Mooncakes 发布 | 已完成 | `moon publish` 校验通过，服务端返回 `200 OK`，版本 `0.2.0` |
 | 许可证 | 已确认 | `LICENSE`，Apache-2.0 |
-| 默认分支 | 待远程推送后复核 | 目标为 `main` |
-| 唯一贡献者 | 待最终推送前复核 | 本地历史需全部核对为 `zmjknn` |
+| 默认分支 | 已复核 | GitHub `main` 已更新至最终提交 |
+| 唯一贡献者 | 已复核 | 本地历史提交者统一为 `zmjknn` |
 
 ## 真实基准
 
@@ -30,9 +30,9 @@
 
 当前本地编译器已经是 `moonc v0.10.7+bc794d341 (2026-08-11)`。官方 `moon upgrade` 在本次非交互终端中返回 `IO error: not a terminal`，官方 PowerShell 安装器随后因网络传输 `unexpected EOF` 未完成刷新；因此没有把失败的下载结果当作升级成功。CI 使用官方 stable 安装脚本，每次运行会打印 `moon version --all`。
 
-## 推送前剩余动作
+## 推送后结果
 
-1. 使用授权 API 核对 GitHub 当前登录账号、仓库 owner 和默认分支，不读取历史缓存账号文件。
-2. 使用 MoonBit 支持的发布/登录状态路径核对 Mooncakes namespace 为 `zmjknn`。
-3. 提交最终文档与生成接口，推送 GitHub 和 GitLink 的 `main`，执行手动 Mooncakes 发布。
-4. 推送后复查远程 CI、默认分支、提交者和包版本。
+1. GitHub 授权 API 返回 `zmjknn`；`origin` 的 `main` 已更新至最终提交 `98d45c6`。
+2. `moon whoami` 返回 `Logged in as zmjknn`，`moon publish` 发布 `0.2.0` 成功。
+3. GitLink 远端拒绝写入并返回 Gitea `User permission denied for writing`；其远端 `main` 仍停留在旧提交，需账号持有人在 GitLink 侧补充仓库写权限后重试。
+4. GitHub Actions 已配置三平台 CI；推送后的运行结果需以 GitHub Actions 页面为准，native Windows 本地 runtime 限制已在上文记录。

@@ -67,3 +67,6 @@
 - `moon fmt --check`, `moon check --deny-warn --target all`, and wasm/wasm-gc/js test targets passed; each reported 125/125 tests. `moon run --target wasm-gc src/cli` and the release benchmark passed.
 - Native Windows test remains blocked by the installed runtime C source calling `rand_s` without a declaration. The official `moon upgrade` non-interactive attempt and official installer refresh both failed before changing the installed stable toolchain; the exact limitation is recorded in the acceptance self-review.
 - Account gate passed through supported status paths: GitHub API reported `zmjknn`, `git remote show origin` reported `main`, and `moon whoami` reported `Logged in as zmjknn`. Push and publish remain the next external-state actions.
+- GitHub push succeeded after retrying over HTTP/1.1; `origin/main` now contains `98d45c6`.
+- `moon publish` completed package verification and returned server status 200 for `zmjknn/moon-stream-quality` version 0.2.0.
+- GitLink rejected the same push with Gitea `User permission denied for writing`; no GitLink remote state was changed.
