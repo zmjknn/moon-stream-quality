@@ -30,8 +30,8 @@
 
 - [x] Record current source count, baseline tests, remote default branch, license, and toolchain in the planning files.
 - [x] Run `git diff --check`, `moon fmt --check`, `moon check --deny-warn`, and `moon test --deny-warn` before implementation.
-- [ ] Run `git status --short` and confirm only the proposal and planning/design files are uncommitted.
-- [ ] Commit the design and plan with `docs: define August Hackathon acceptance design`.
+- [x] Run `git status --short` and confirm only the proposal, planning files, and design files are uncommitted.
+- [x] Commit the design and plan with `docs: define August Hackathon acceptance design`.
 
 Expected result: the branch has one reviewable design commit and all baseline checks remain green.
 
@@ -58,12 +58,12 @@ Expected result: the branch has one reviewable design commit and all baseline ch
 - `pub fn WindowRuntime::active_window_count(self : WindowRuntime) -> Int`
 - `pub fn WindowRuntime::late_event_count(self : WindowRuntime) -> Int`
 
-- [ ] Write tests for timestamp classification at exact watermark, one millisecond late, too-late policy, empty runtime, zero/negative configuration, window boundary, max-window eviction, and flush idempotence.
-- [ ] Run `moon test src/core/event_time_test.mbt --deny-warn`; confirm the new tests fail because the types/functions do not exist.
-- [ ] Implement the enums, tracker, fixed-capacity window storage, and deterministic close/flush behavior in small `///|` blocks.
-- [ ] Run the focused test again, then `moon test src/core --deny-warn`.
-- [ ] Refactor only after green: centralize safe configuration normalization and remove duplicate timestamp calculations.
-- [ ] Commit `feat(core): add bounded event-time window runtime`.
+- [x] Write tests for timestamp classification at exact watermark, one millisecond late, too-late policy, empty runtime, zero/negative configuration, window boundary, max-window eviction, and flush idempotence.
+- [x] Run `moon test src/core/event_time_test.mbt --deny-warn`; confirm the new tests fail because the types/functions do not exist.
+- [x] Implement the enums, tracker, fixed-capacity window storage, and deterministic close/flush behavior in small `///|` blocks.
+- [x] Run the focused test again, then `moon test src/core --deny-warn`.
+- [x] Refactor only after green: centralize safe configuration normalization and remove duplicate timestamp calculations.
+- [x] Commit `feat(core): add bounded event-time window runtime`.
 
 Expected result: late events are classified deterministically, no window array grows beyond configured capacity, and the existing core tests remain green.
 
@@ -81,11 +81,11 @@ Expected result: late events are classified deterministically, no window array g
 - `pub fn compare_schemas(old_schema : @schema.Schema, new_schema : @schema.Schema, mode : CompatibilityMode) -> SchemaDiff`
 - `pub fn apply_schema_defaults(schema : @schema.Schema, event : @core.StreamEvent) -> Int`
 
-- [ ] Write failing tests for identical schemas, optional addition, required addition, removal under each mode, type change, default insertion, and a missing default.
-- [ ] Run the focused test and confirm failure is due to absent compatibility API.
-- [ ] Implement deterministic field-name ordering, type comparison, compatibility rules, and in-place default insertion.
-- [ ] Run `moon test src/schema --deny-warn` and inspect the exact `SchemaDiff` results.
-- [ ] Commit `feat(schema): add schema evolution compatibility checks`.
+- [x] Write failing tests for identical schemas, optional addition, required addition, removal under each mode, type change, default insertion, and a missing default.
+- [x] Run the focused test and confirm failure is due to absent compatibility API.
+- [x] Implement deterministic field-name ordering, type comparison, compatibility rules, and in-place default insertion.
+- [x] Run `moon test src/schema --deny-warn` and inspect the exact `SchemaDiff` results.
+- [x] Commit `feat(schema): add schema evolution compatibility checks`.
 
 Expected result: schema evolution can be checked before rules run, with no hidden coercion and a count of applied defaults.
 
@@ -105,11 +105,11 @@ Expected result: schema evolution can be checked before rules run, with no hidde
 - `pub fn DelimitedStreamReader::finish(self : DelimitedStreamReader) -> Array[LineParseResult]`
 - `pub fn parse_json_lines(lines : Array[String], timestamp? : Int64 = 0L) -> Array[LineParseResult]`
 
-- [ ] Write failing tests for quoted delimiter, doubled quote, chunk split inside a quote, empty final line, unterminated quote, invalid JSON with line/column, and continued parsing after a rejected line.
-- [ ] Run focused parser tests and confirm the new API is missing.
-- [ ] Implement a small CSV state machine and JSONL result wrapper using existing parsers for completed records.
-- [ ] Run `moon test src/parser --deny-warn` and all existing parser tests.
-- [ ] Commit `feat(parser): add resilient chunked stream readers`.
+- [x] Write failing tests for quoted delimiter, doubled quote, chunk split inside a quote, empty final line, unterminated quote, invalid JSON with line/column, and continued parsing after a rejected line.
+- [x] Run focused parser tests and confirm the new API is missing.
+- [x] Implement a small CSV state machine and JSONL result wrapper using existing parsers for completed records.
+- [x] Run `moon test src/parser --deny-warn` and all existing parser tests.
+- [x] Commit `feat(parser): add resilient chunked stream readers`.
 
 Expected result: malformed records become structured rejects while valid records after them remain processable.
 
@@ -134,11 +134,11 @@ Expected result: malformed records become structured rejects while valid records
 - `pub fn StreamHealthMonitor::snapshot(self : StreamHealthMonitor) -> HealthSnapshot`
 - `pub fn StreamHealthMonitor::reset_window(self : StreamHealthMonitor, window_start : Int64) -> Unit`
 
-- [ ] Write failing tests for empty quantiles, clamped percentile, capacity eviction, zero latency, missing/duplicate counters, p50/p95/p99, starvation, burst, healthy exact boundaries, and reset.
-- [ ] Run the focused tests and confirm failure.
-- [ ] Implement a bounded sorted-copy quantile calculation and monitor snapshot; use event metadata IDs for duplicate detection.
-- [ ] Run `moon test src/rules/health_test.mbt --deny-warn` and all rule tests.
-- [ ] Commit `feat(rules): add bounded stream health observability`.
+- [x] Write failing tests for empty quantiles, clamped percentile, capacity eviction, zero latency, missing/duplicate counters, p50/p95/p99, starvation, burst, healthy exact boundaries, and reset.
+- [x] Run the focused tests and confirm failure.
+- [x] Implement a bounded sorted-copy quantile calculation and monitor snapshot; use event metadata IDs for duplicate detection.
+- [x] Run `moon test src/rules/health_test.mbt --deny-warn` and all rule tests.
+- [x] Commit `feat(rules): add bounded stream health observability`.
 
 Expected result: the engine exposes actual operational quality indicators without unbounded retention or floating-point invalid results.
 
@@ -161,11 +161,11 @@ Expected result: the engine exposes actual operational quality indicators withou
 - `pub fn build_replay_plan(checkpoint : PipelineCheckpoint, queue : @pipeline.DeadLetterQueueManager, max_attempts? : Int = 3) -> ReplayPlan`
 - `pub fn replay_plan(plan : ReplayPlan, queue : @pipeline.DeadLetterQueueManager) -> ReplayResult`
 
-- [ ] Write failing tests for checkpoint round-trip, monotonic offset, accepted/rejected counts, malformed checkpoint, empty DLQ, retry cap, missing entry, and replay idempotence.
-- [ ] Run focused tests and confirm failure.
-- [ ] Implement stable JSON fields, safe parser checks, and deterministic queue iteration.
-- [ ] Run pipeline tests and full tests.
-- [ ] Commit `feat(pipeline): add checkpointed dead-letter replay`.
+- [x] Write failing tests for checkpoint round-trip, monotonic offset, accepted/rejected counts, malformed checkpoint, empty DLQ, retry cap, missing entry, and replay idempotence.
+- [x] Run focused tests and confirm failure.
+- [x] Implement stable JSON fields, safe parser checks, and deterministic queue iteration.
+- [x] Run pipeline tests and full tests.
+- [x] Commit `feat(pipeline): add checkpointed dead-letter replay`.
 
 Expected result: a failed event can be audited and retried from a stable in-memory checkpoint without duplicating successful entries.
 
@@ -186,11 +186,11 @@ Expected result: a failed event can be audited and retried from a stable in-memo
 - `pub fn run_access_log_workload(spec : WorkloadSpec) -> WorkloadResult`
 - `pub fn format_workload_result(result : WorkloadResult) -> String`
 
-- [ ] Write failing tests that assert deterministic counts for fixed workload specs at count 0, count 1, and count 120.
-- [ ] Run benchmark package tests and confirm missing workload APIs fail.
-- [ ] Implement seeded synthetic events with documented defect frequencies and feed them through the actual parser/runtime/engine path.
-- [ ] Replace hard-coded `throughput_eps` values in `src/benchmark/suite.mbt` with measured benchmark output or explicitly labeled operation counts.
-- [ ] Run `moon test src/benchmark --deny-warn` and `moon run --target native src/cli`.
+- [x] Write failing tests that assert deterministic counts for fixed workload specs at count 0, count 1, and count 120.
+- [x] Run benchmark package tests and confirm missing workload APIs fail.
+- [x] Implement seeded synthetic events with documented defect frequencies and feed them through the actual parser/runtime/engine path.
+- [x] Replace hard-coded `throughput_eps` values in `src/benchmark/suite.mbt` with measured benchmark output or explicitly labeled operation counts.
+- [x] Run `moon test src/benchmark --deny-warn` and `moon run --target native src/cli`.
 - [ ] Commit `feat(benchmark): add reproducible streaming workloads`.
 
 Expected result: three realistic domains exercise the production path and return stable quality counts suitable for benchmark reporting.

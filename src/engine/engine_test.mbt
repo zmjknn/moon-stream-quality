@@ -50,3 +50,21 @@ test "stream pipeline batch processing" {
   assert_eq(batch_summary.failed_events, 1L)
   assert_eq(batch_summary.pass_rate, 0.5)
 }
+
+///|
+test "pipeline observation updates event-time and health state" {
+  let pipeline = StreamPipeline::new("observed-pipeline")
+  pipeline
+  .get_registry()
+  .register_completeness(@rules.CompletenessRule::new("required-id", "id"))
+  let monitor = @rules.StreamHealthMonitor::new(1000L, min_events=0)
+  let runtime = @core.WindowRuntime::new(1000L)
+  let payload : Map[String, @core.Value] = Map([])
+  payload.set("id", @core.Value::String("a"))
+  let event = @core.StreamEvent::new("observed-1", 100L, payload~)
+  let observed = pipeline.process_event_with_observer(event, monitor, runtime)
+  assert_eq(observed.evaluation.passed, true)
+  assert_eq(observed.assignment, @core.OnTime)
+  assert_eq(runtime.active_window_count(), 1)
+  assert_eq(monitor.snapshot().total, 1L)
+}

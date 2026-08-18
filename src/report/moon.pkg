@@ -1,4 +1,5 @@
 import {
   "zmjknn/moon-stream-quality/src/core",
   "zmjknn/moon-stream-quality/src/engine",
+  "zmjknn/moon-stream-quality/src/rules",
 }

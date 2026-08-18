@@ -8,6 +8,7 @@ test "financial workload benchmark" {
   assert_eq(res.total_events, 100L)
   assert_eq(res.pass_rate, 1.0)
   assert_eq(res.quality_score, 100.0)
+  assert_eq(res.rule_evaluations, 400L)
 }
 
 ///|
@@ -15,4 +16,5 @@ test "syslog workload benchmark" {
   let res = run_syslog_benchmark(50)
   assert_eq(res.total_events, 50L)
   assert_eq(res.pass_rate, 1.0)
+  assert_eq(res.rule_evaluations, 150L)
 }

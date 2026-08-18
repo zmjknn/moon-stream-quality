@@ -3,6 +3,11 @@
 // Apache-2.0 License
 
 ///|
+pub fn render_workload_summary(result : @benchmark.WorkloadResult) -> String {
+  "📈 " + @benchmark.format_workload_result(result)
+}
+
+///|
 fn main {
   println("=================================================================")
   println("🌊 MoonBit Stream Data Quality Rule Engine (moon-stream-quality)")
@@ -74,6 +79,11 @@ fn main {
         "\n✅ Data Quality Score meets requirement. No alerts triggered.",
       )
   }
+
+  let workload = @benchmark.run_sensor_workload(
+    @benchmark.WorkloadSpec::new("cli_sensor_workload", 100, 10, 7, 13),
+  )
+  println("\n" + render_workload_summary(workload))
 
   println("\n=================================================================")
   println("Stream Quality Analysis Completed Successfully.")
