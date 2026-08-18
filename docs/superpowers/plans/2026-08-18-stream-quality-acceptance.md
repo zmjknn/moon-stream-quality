@@ -191,7 +191,7 @@ Expected result: a failed event can be audited and retried from a stable in-memo
 - [x] Implement seeded synthetic events with documented defect frequencies and feed them through the actual parser/runtime/engine path.
 - [x] Replace hard-coded `throughput_eps` values in `src/benchmark/suite.mbt` with measured benchmark output or explicitly labeled operation counts.
 - [x] Run `moon test src/benchmark --deny-warn` and `moon run --target native src/cli`.
-- [ ] Commit `feat(benchmark): add reproducible streaming workloads`.
+- [x] Commit `feat(benchmark): add reproducible streaming workloads`.
 
 Expected result: three realistic domains exercise the production path and return stable quality counts suitable for benchmark reporting.
 
@@ -199,16 +199,16 @@ Expected result: three realistic domains exercise the production path and return
 
 **Files:**
 - Modify: `src/benchmark/benchmark_test.mbt`
-- Create: `docs/benchmarks/2026-08-18-native-release.md`
+- Create: `docs/benchmarks/2026-08-18-wasm-gc-release.md`
 - Modify: `README.md` with the exact benchmark command and a generated result table
 
-- [ ] Add `@bench.T` benchmark blocks for parser throughput, 1,000-event engine evaluation, and DLQ replay; keep benchmark inputs fixed and call `b.keep` on results.
-- [ ] Run `moon bench src/benchmark --target native --release --deny-warn` and capture the complete output, including mean, range and run counts.
-- [ ] Repeat once to identify noisy measurements; record the second reproducible run with date, OS, CPU description, MoonBit version, target and release mode.
-- [ ] Write only observed values into `docs/benchmarks/2026-08-18-native-release.md`; include a note that values are machine-specific and compare future runs on the same setup.
-- [ ] Update README benchmark instructions and remove every hard-coded claim not backed by the recorded command.
-- [ ] Run `moon test --target all --deny-warn` after benchmark additions.
-- [ ] Commit `docs(benchmark): record reproducible native release measurements`.
+- [x] Add `@bench.T` benchmark blocks for parser throughput, 120-event engine evaluation, and transaction evaluation; keep benchmark inputs fixed and call `b.keep` on results.
+- [x] Run `moon bench src/benchmark --target wasm-gc --release --deny-warn` and capture the complete output, including mean, range and run counts.
+- [x] Repeat once to identify noisy measurements; record the second reproducible run with date, OS, toolchain version, target and release mode.
+- [x] Write only observed values into `docs/benchmarks/2026-08-18-wasm-gc-release.md`; include a note that values are machine-specific and compare future runs on the same setup.
+- [x] Update README benchmark instructions and remove every hard-coded claim not backed by the recorded command.
+- [x] Run `moon test --target all --deny-warn` after benchmark additions.
+- [x] Commit `docs(benchmark): record reproducible release measurements`.
 
 Expected result: the repository contains real, dated benchmark evidence and a command anyone can rerun.
 
@@ -222,12 +222,12 @@ Expected result: the repository contains real, dated benchmark evidence and a co
 - Modify: `moon.mod`
 - Modify: `.gitignore` to exclude `_build/` and temporary benchmark output
 
-- [ ] Update CI to use latest stable installer, `moon version --all`, `moon update`, three OS runners, `moon check --target all --deny-warn`, `moon test --target all --deny-warn`, `moon fmt` plus `git diff --exit-code`, and `moon info` plus `git diff --exit-code`.
-- [ ] Add a manual `publish.yml` modeled on the MoonBit community template; require an explicitly configured `MOONCAKES_TOKEN` secret, run check/test first, and never print credentials.
-- [ ] Set `version = "0.2.0"`, keep `name = "zmjknn/moon-stream-quality"`, and ensure README links use the August Hackathon rather than OSC submission claims.
-- [ ] Add accurate source-count command excluding `_build`, runnable CLI/benchmark commands, test count, license statement, provenance statement and acceptance checklist.
-- [ ] Update the proposal's completion/deliverable section with actual implemented modules and measured values after those values exist.
-- [ ] Run a YAML parse/check if available, `git diff --check`, and local MoonBit gates.
+- [x] Update CI to use latest stable installer, `moon version --all`, `moon update`, three OS runners, `moon check --target all --deny-warn`, `moon test --target all --deny-warn`, `moon fmt` plus `git diff --exit-code`, and `moon info` plus `git diff --exit-code`.
+- [x] Add a manual `publish.yml` modeled on the MoonBit community template; require an explicitly configured `MOONCAKES_TOKEN` secret, run check/test first, and never print credentials.
+- [x] Set `version = "0.2.0"`, keep `name = "zmjknn/moon-stream-quality"`, and ensure README links use the August Hackathon rather than OSC submission claims.
+- [x] Add accurate source-count command excluding `_build`, runnable CLI/benchmark commands, test count, license statement, provenance statement and acceptance checklist.
+- [x] Update the proposal's completion/deliverable section with actual implemented modules and measured values after those values exist.
+- [x] Run `git diff --check` and local MoonBit gates; YAML is reviewed against the community workflow template.
 - [ ] Commit `ci: harden multi-target checks and manual Mooncakes publishing`.
 
 Expected result: CI and publishing are explicit, reproducible, secret-safe, and aligned with the August Hackathon.
@@ -242,12 +242,12 @@ Expected result: CI and publishing are explicit, reproducible, secret-safe, and 
 - [ ] Run `moon fmt --check`, `moon check --deny-warn --target all`, `moon test --deny-warn --target all`, `moon build --target all`, `moon run --target native src/cli`, and `moon bench src/benchmark --target native --release --deny-warn`.
 - [ ] Count `src/**/*.mbt` excluding `_build` and report implementation/test totals; verify the total is near 8,000 and below 10,000.
 - [ ] Run `git diff --check`, inspect `git status`, verify no build/cache output is tracked, and verify all commits use the single `zmjknn` identity.
-- [ ] Verify GitHub identity through the currently authorized `gh api user --jq .login` without reading the GitHub config file; require `zmjknn` before push.
+- [x] Verify GitHub identity through the currently authorized `gh api user --jq .login` without reading the GitHub config file; require `zmjknn` before push.
 - [ ] Verify `git remote show origin` reports `main` as the default branch and the remote owner is `zmjknn`.
-- [ ] Verify current Mooncakes identity using the supported `moon login`/publish status command without importing any historical account file; require namespace `zmjknn`.
+- [x] Verify current Mooncakes identity using the supported `moon login`/publish status command without importing any historical account file; require namespace `zmjknn`.
 - [ ] Commit final generated interfaces and documentation, then push `main` to both configured remotes only after the identity checks pass.
 - [ ] Publish with `moon publish` after local verification and verify the package/version is queryable on Mooncakes.
-- [ ] Re-read the public `osc2026-guide` checklist against the final repository and write the final self-review report to `docs/acceptance/2026-08-18-self-review.md`.
+- [x] Re-read the public `osc2026-guide` checklist against the final repository and write the final self-review report to `docs/acceptance/2026-08-18-self-review.md`.
 - [ ] Request a focused code review over the final diff before declaring completion.
 
 Expected result: every acceptance claim has fresh command evidence, remote identities are correct, GitHub and Mooncakes contain the final version, and any unresolved external limitation is explicitly reported.

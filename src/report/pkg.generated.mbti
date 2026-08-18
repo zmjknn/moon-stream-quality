@@ -5,12 +5,17 @@ import {
   "moonbitlang/core/debug",
   "zmjknn/moon-stream-quality/src/core",
   "zmjknn/moon-stream-quality/src/engine",
+  "zmjknn/moon-stream-quality/src/rules",
 }
 
 // Values
 pub fn calculate_quality_score(DimensionalMetrics, weights? : ScoreWeights) -> Double
 
 pub fn compute_metrics_from_summary(@engine.PipelineBatchSummary, schema_errors_count? : Int) -> DimensionalMetrics
+
+pub fn format_health_json(@rules.HealthSnapshot) -> String
+
+pub fn format_health_markdown(@rules.HealthSnapshot) -> String
 
 pub fn format_json_report(@engine.PipelineBatchSummary, DimensionalMetrics, Double) -> String
 
@@ -38,4 +43,3 @@ pub fn ScoreWeights::default() -> Self
 // Type aliases
 
 // Traits
-

@@ -1,0 +1,39 @@
+name: Publish to Mooncakes
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Verify and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install MoonBit
+        shell: bash
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Print toolchain versions
+        run: moon version --all
+
+      - name: Verify package
+        run: |
+          moon update
+          moon check --target all --deny-warn
+          moon test --target all --deny-warn
+          moon fmt --check
+          moon info
+
+      - name: Publish module
+        env:
+          MOONCAKES_TOKEN: ${{ secrets.MOONCAKES_TOKEN }}
+        run: moon publish

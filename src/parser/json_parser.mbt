@@ -10,6 +10,26 @@ pub(all) struct JsonParseError {
 } derive(Eq, Debug)
 
 ///|
+fn unescape_json_string(value : String) -> String {
+  let mut result = ""
+  let mut index = 0
+  while index < value.length() {
+    let c = value[index].to_int().unsafe_to_char()
+    if c == '\\' && index + 1 < value.length() {
+      let next = value[index + 1].to_int().unsafe_to_char()
+      if next == '"' || next == '\\' || next == '/' {
+        result = result + String::make(1, next.to_int().unsafe_to_char())
+        index = index + 2
+        continue
+      }
+    }
+    result = result + String::make(1, c.to_int().unsafe_to_char())
+    index = index + 1
+  }
+  result
+}
+
+///|
 /// Parses a JSON string into a core @core.Value.
 pub fn parse_json_value(json_str : String) -> @core.Value? {
   let len = json_str.length()
@@ -28,7 +48,7 @@ pub fn parse_json_value(json_str : String) -> @core.Value? {
     return Some(@core.Value::Bool(false))
   }
   if s.has_prefix("\"") && s.has_suffix("\"") && s.length() >= 2 {
-    let inner = s[1:s.length() - 1].to_owned()
+    let inner = unescape_json_string(s[1:s.length() - 1].to_owned())
     return Some(@core.Value::String(inner))
   }
   if s.has_prefix("[") && s.has_suffix("]") {

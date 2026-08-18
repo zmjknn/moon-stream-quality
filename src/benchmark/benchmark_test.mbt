@@ -18,3 +18,23 @@ test "syslog workload benchmark" {
   assert_eq(res.pass_rate, 1.0)
   assert_eq(res.rule_evaluations, 150L)
 }
+
+///|
+test (b : @bench.T) {
+  let json_lines = [
+    "{\"device_id\":\"sensor-1\",\"temperature\":22.5}", "{\"device_id\":\"sensor-2\",\"temperature\":23.0}",
+  ]
+  b.bench(name="jsonl_reader", fn() {
+    b.keep(@parser.parse_json_lines(json_lines).length())
+  })
+  b.bench(name="sensor_quality_pipeline", fn() {
+    b.keep(
+      run_sensor_workload(WorkloadSpec::new("bench-sensor", 120, 10, 7, 13)).failed,
+    )
+  })
+  b.bench(name="transaction_quality_pipeline", fn() {
+    b.keep(
+      run_transaction_workload(WorkloadSpec::new("bench-orders", 120, 11, 0, 0)).failed,
+    )
+  })
+}

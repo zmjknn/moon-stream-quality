@@ -32,6 +32,11 @@ pub(all) struct PipelineEventResult {
   failed_rules_count : Int
 } derive(Eq, @debug.Debug)
 
+pub(all) struct PipelineObservationResult {
+  evaluation : PipelineEventResult
+  assignment : @core.WindowAssignment
+} derive(Eq, @debug.Debug)
+
 pub(all) enum RuleItem {
   Completeness(@rules.CompletenessRule)
   Uniqueness(@rules.UniquenessRule)
@@ -77,9 +82,9 @@ pub fn StreamPipeline::get_registry(Self) -> RuleRegistry
 pub fn StreamPipeline::new(String, schema? : @schema.Schema?, sample_limit? : Int) -> Self
 pub fn StreamPipeline::process_batch(Self, Array[@core.StreamEvent]) -> PipelineBatchSummary
 pub fn StreamPipeline::process_event(Self, @core.StreamEvent) -> PipelineEventResult
+pub fn StreamPipeline::process_event_with_observer(Self, @core.StreamEvent, @rules.StreamHealthMonitor, @core.WindowRuntime) -> PipelineObservationResult
 pub fn StreamPipeline::set_schema(Self, @schema.Schema) -> Unit
 
 // Type aliases
 
 // Traits
-

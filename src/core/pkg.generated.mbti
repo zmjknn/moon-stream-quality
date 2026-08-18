@@ -19,6 +19,19 @@ pub(all) struct EventMeta {
 } derive(Eq, @debug.Debug)
 pub fn EventMeta::new(source_id? : String, partition? : Int, offset? : Int64, ingest_timestamp? : Int64) -> Self
 
+pub(all) struct EventTimeWindow {
+  start : Int64
+  end : Int64
+  events : Array[StreamEvent]
+  mut closed : Bool
+} derive(@debug.Debug)
+
+pub(all) enum LateEventPolicy {
+  Drop
+  SideOutput
+  Accept
+} derive(Eq, @debug.Debug)
+
 pub(all) struct StreamContext {
   mut watermark : Int64
   mut total_events_processed : Int64
@@ -81,7 +94,38 @@ pub fn Value::is_timestamp(Self) -> Bool
 pub fn Value::to_string(Self) -> String
 pub fn Value::type_name(Self) -> String
 
+pub(all) struct WatermarkTracker {
+  mut max_timestamp : Int64
+  allowed_lateness_ms : Int64
+  mut initialized : Bool
+} derive(Eq, @debug.Debug)
+pub fn WatermarkTracker::classify(Self, Int64) -> WindowAssignment
+pub fn WatermarkTracker::new(allowed_lateness_ms? : Int64) -> Self
+pub fn WatermarkTracker::observe(Self, Int64) -> Int64
+
+pub(all) enum WindowAssignment {
+  OnTime
+  Late
+  TooLate
+} derive(Eq, @debug.Debug)
+
+pub(all) struct WindowRuntime {
+  window_size_ms : Int64
+  allowed_lateness_ms : Int64
+  max_windows : Int
+  policy : LateEventPolicy
+  watermark : WatermarkTracker
+  windows : Array[EventTimeWindow]
+  mut late_count : Int
+  mut dropped_count : Int
+} derive(@debug.Debug)
+pub fn WindowRuntime::active_window_count(Self) -> Int
+pub fn WindowRuntime::advance_watermark(Self, Int64) -> Array[EventTimeWindow]
+pub fn WindowRuntime::flush(Self) -> Array[EventTimeWindow]
+pub fn WindowRuntime::ingest(Self, StreamEvent) -> WindowAssignment
+pub fn WindowRuntime::late_event_count(Self) -> Int
+pub fn WindowRuntime::new(Int64, allowed_lateness_ms? : Int64, max_windows? : Int, policy? : LateEventPolicy) -> Self
+
 // Type aliases
 
 // Traits
-

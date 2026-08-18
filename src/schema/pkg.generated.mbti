@@ -7,11 +7,21 @@ import {
 }
 
 // Values
+pub fn apply_schema_defaults(Schema, @core.StreamEvent) -> Int
+
+pub fn compare_schemas(Schema, Schema, CompatibilityMode) -> SchemaDiff
+
 pub fn infer_schema(String, Array[@core.StreamEvent]) -> Schema
 
 // Errors
 
 // Types and methods
+pub(all) enum CompatibilityMode {
+  Strict
+  BackwardCompatible
+  ForwardCompatible
+} derive(Eq, @debug.Debug)
+
 pub(all) struct FieldDef {
   name : String
   field_type : FieldType
@@ -44,6 +54,21 @@ pub fn Schema::get_field(Self, String) -> FieldDef?
 pub fn Schema::new(String, strict_mode? : Bool) -> Self
 pub fn Schema::validate_event(Self, @core.StreamEvent) -> Array[SchemaValidationError]
 
+pub(all) enum SchemaChange {
+  AddedOptional(String)
+  AddedRequired(String)
+  Removed(String)
+  TypeChanged(String, String, String)
+  NullabilityChanged(String, Bool, Bool)
+  Unchanged
+} derive(Eq, @debug.Debug)
+
+pub(all) struct SchemaDiff {
+  compatible : Bool
+  changes : Array[SchemaChange]
+  defaults_applied : Int
+} derive(Eq, @debug.Debug)
+
 pub(all) struct SchemaValidationError {
   field_name : String
   expected_type : String
@@ -54,4 +79,3 @@ pub(all) struct SchemaValidationError {
 // Type aliases
 
 // Traits
-

@@ -21,6 +21,8 @@ pub fn parse_int64_safe(String) -> Int64?
 
 pub fn parse_json_event(String, String, timestamp? : Int64) -> @core.StreamEvent?
 
+pub fn parse_json_lines(Array[String], timestamp? : Int64) -> Array[LineParseResult]
+
 pub fn parse_json_value(String) -> @core.Value?
 
 pub fn parse_logfmt_event(String, String, timestamp? : Int64) -> @core.StreamEvent
@@ -55,9 +57,32 @@ pub(all) struct CsvParserConfig {
 } derive(Eq, @debug.Debug)
 pub fn CsvParserConfig::default() -> Self
 
+pub(all) struct DelimitedStreamReader {
+  delimiter : Char
+  quote : Char
+  mut pending : String
+  mut line_number : Int
+  mut in_quotes : Bool
+} derive(@debug.Debug)
+pub fn DelimitedStreamReader::finish(Self) -> Array[LineParseResult]
+pub fn DelimitedStreamReader::new(delimiter? : Char) -> Self
+pub fn DelimitedStreamReader::push_chunk(Self, String) -> Array[LineParseResult]
+
 pub(all) struct JsonParseError {
   position : Int
   message : String
+} derive(Eq, @debug.Debug)
+
+pub(all) enum LineParseResult {
+  Parsed(@core.StreamEvent)
+  Rejected(ParseIssue)
+} derive(@debug.Debug)
+
+pub(all) struct ParseIssue {
+  line : Int
+  column : Int
+  message : String
+  raw : String
 } derive(Eq, @debug.Debug)
 
 pub(all) struct SyslogMessage {
@@ -76,4 +101,3 @@ pub(all) struct SyslogMessage {
 // Type aliases
 
 // Traits
-

@@ -6,9 +6,17 @@ import {
 }
 
 // Values
+pub fn format_workload_result(WorkloadResult) -> String
+
+pub fn run_access_log_workload(WorkloadSpec) -> WorkloadResult
+
 pub fn run_financial_benchmark(Int) -> BenchmarkSuiteResult
 
+pub fn run_sensor_workload(WorkloadSpec) -> WorkloadResult
+
 pub fn run_syslog_benchmark(Int) -> BenchmarkSuiteResult
+
+pub fn run_transaction_workload(WorkloadSpec) -> WorkloadResult
 
 // Errors
 
@@ -16,12 +24,30 @@ pub fn run_syslog_benchmark(Int) -> BenchmarkSuiteResult
 pub(all) struct BenchmarkSuiteResult {
   workload_name : String
   total_events : Int64
-  throughput_eps : Double
+  rule_evaluations : Int64
   pass_rate : Double
   quality_score : Double
 } derive(Eq, @debug.Debug)
 
+pub(all) struct WorkloadResult {
+  name : String
+  event_count : Int
+  passed : Int
+  failed : Int
+  late : Int
+  duplicate : Int
+  quality_score : Double
+} derive(Eq, @debug.Debug)
+
+pub(all) struct WorkloadSpec {
+  name : String
+  event_count : Int
+  invalid_every : Int
+  duplicate_every : Int
+  late_every : Int
+} derive(Eq, @debug.Debug)
+pub fn WorkloadSpec::new(String, Int, Int, Int, Int) -> Self
+
 // Type aliases
 
 // Traits
-

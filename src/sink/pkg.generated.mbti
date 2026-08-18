@@ -42,4 +42,3 @@ pub fn AlertPayload::to_webhook_json(Self) -> String
 // Type aliases
 
 // Traits
-

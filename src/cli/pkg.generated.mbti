@@ -2,6 +2,7 @@
 package "zmjknn/moon-stream-quality/src/cli"
 
 import {
+  "zmjknn/moon-stream-quality/src/benchmark",
   "zmjknn/moon-stream-quality/src/core",
 }
 
@@ -10,6 +11,8 @@ pub fn generate_benchmark_order_stream(Int, base_timestamp? : Int64) -> Array[@c
 
 pub fn generate_benchmark_sensor_stream(Int, base_timestamp? : Int64) -> Array[@core.StreamEvent]
 
+pub fn render_workload_summary(@benchmark.WorkloadResult) -> String
+
 // Errors
 
 // Types and methods
@@ -17,4 +20,3 @@ pub fn generate_benchmark_sensor_stream(Int, base_timestamp? : Int64) -> Array[@
 // Type aliases
 
 // Traits
-

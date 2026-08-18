@@ -7,6 +7,9 @@ import {
 }
 
 // Values
+pub fn build_replay_plan(PipelineCheckpoint, DeadLetterQueueManager, max_attempts? : Int) -> ReplayPlan
+
+pub fn replay_plan(ReplayPlan, DeadLetterQueueManager) -> ReplayResult
 
 // Errors
 
@@ -16,6 +19,7 @@ pub(all) struct DeadLetterQueueManager {
   queue : Array[DlqEntry]
   mut total_dropped : Int64
 } derive(Eq, @debug.Debug)
+pub fn DeadLetterQueueManager::find_entry(Self, String) -> DlqEntry?
 pub fn DeadLetterQueueManager::get_retryable_entries(Self) -> Array[DlqEntry]
 pub fn DeadLetterQueueManager::mark_retried(Self, String) -> Unit
 pub fn DeadLetterQueueManager::new(capacity? : Int) -> Self
@@ -46,6 +50,34 @@ pub fn MultiStreamJoinValidator::ingest_right(Self, @core.StreamEvent) -> Unit
 pub fn MultiStreamJoinValidator::new(String, String, String, join_kind? : StreamJoinKind, max_skew_ms? : Int64) -> Self
 pub fn MultiStreamJoinValidator::validate_join_integrity(Self) -> Array[StreamJoinViolation]
 
+pub(all) struct PipelineCheckpoint {
+  pipeline_name : String
+  source_id : String
+  partition : Int
+  mut offset : Int64
+  mut watermark : Int64
+  mut accepted : Int64
+  mut rejected : Int64
+  mut dlq_cursor : Int
+} derive(Eq, @debug.Debug)
+pub fn PipelineCheckpoint::advance(Self, @core.StreamEvent, Bool, Int64) -> Unit
+pub fn PipelineCheckpoint::from_json(String) -> Self?
+pub fn PipelineCheckpoint::new(String, String, Int, Int64) -> Self
+pub fn PipelineCheckpoint::to_json(Self) -> String
+
+pub(all) struct ReplayPlan {
+  checkpoint : PipelineCheckpoint
+  entry_ids : Array[String]
+  max_attempts : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ReplayResult {
+  attempted : Int
+  replayed : Int
+  exhausted : Int
+  missing : Int
+} derive(Eq, @debug.Debug)
+
 pub(all) enum StreamJoinKind {
   InnerJoin
   LeftOuterJoin
@@ -63,4 +95,3 @@ pub(all) struct StreamJoinViolation {
 // Type aliases
 
 // Traits
-
