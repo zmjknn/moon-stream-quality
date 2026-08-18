@@ -117,7 +117,7 @@ find . -name '*.mbt' -not -path './_build/*' -print0 | xargs -0 cat | wc -l
 ## 模块信息
 
 - Module：`zmjknn/moon-stream-quality`
-- Version：`0.2.1`
+- Version：`0.2.2`
 - Preferred target：`wasm-gc`
 - License：Apache License 2.0
 - GitHub：<https://github.com/zmjknn/moon-stream-quality>
