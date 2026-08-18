@@ -17,7 +17,7 @@
 | CLI | 通过 | `moon run --target wasm-gc src/cli` |
 | 实测基准 | 通过 | `moon bench src/benchmark --target wasm-gc --release --deny-warn` |
 | CI | 已补齐 | Ubuntu/macOS/Windows；全 target check/test、fmt/info 漂移检查 |
-| Mooncakes 发布 | 已完成 | `moon publish` 校验通过，服务端返回 `200 OK`，版本 `0.2.0` |
+| Mooncakes 发布 | 已完成 | `moon publish` 校验通过，服务端返回 `200 OK`，补丁版本更新至 `0.2.1` |
 | 许可证 | 已确认 | `LICENSE`，Apache-2.0 |
 | 默认分支 | 已复核 | GitHub `main` 已更新至最终提交 |
 | 唯一贡献者 | 已复核 | 本地历史提交者统一为 `zmjknn` |
@@ -33,6 +33,6 @@
 ## 推送后结果
 
 1. GitHub 授权 API 返回 `zmjknn`；实现提交 `98d45c6` 和后续验收记录提交 `835dc73` 均已推送到 `origin/main`。
-2. `moon whoami` 返回 `Logged in as zmjknn`，`moon publish` 发布 `0.2.0` 成功。
+2. `moon whoami` 返回 `Logged in as zmjknn`，`moon publish` 发布 `0.2.1` 成功。
 3. GitLink 远端拒绝写入并返回 Gitea `User permission denied for writing`；其远端 `main` 仍停留在旧提交，需账号持有人在 GitLink 侧补充仓库写权限后重试。
 4. GitHub Actions 已配置三平台 CI；推送后的运行结果需以 GitHub Actions 页面为准，native Windows 本地 runtime 限制已在上文记录。
