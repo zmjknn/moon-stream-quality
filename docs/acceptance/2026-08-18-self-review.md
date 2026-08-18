@@ -24,7 +24,7 @@
 
 ## 真实基准
 
-在 Windows、`moon 0.1.20260807`、`moonc v0.10.7`、`wasm-gc`、`--release` 下，最新一次运行均值为：JSONL reader 2.82 µs，传感器质量流水线 55.81 µs，交易质量流水线 224.63 µs。标准差、范围和运行次数见 [`docs/benchmarks/2026-08-18-wasm-gc-release.md`](../benchmarks/2026-08-18-wasm-gc-release.md)。
+在 Windows、`moon 0.1.20260807`、`moonc v0.10.7`、`wasm-gc`、`--release` 下，本轮复核实测均值为：JSONL reader 3.01 µs，传感器质量流水线 58.54 µs，交易质量流水线 75.78 µs。历史基准和完整统计见 [`docs/benchmarks/2026-08-18-wasm-gc-release.md`](../benchmarks/2026-08-18-wasm-gc-release.md)；结果存在运行时波动，不作跨平台性能承诺。
 
 ## 工具链说明
 
@@ -32,7 +32,7 @@
 
 ## 推送后结果
 
-1. GitHub 授权 API 返回 `zmjknn`；实现提交 `98d45c6` 和后续验收记录提交 `835dc73` 均已推送到 `origin/main`。
+1. GitHub 授权 API 返回 `zmjknn`；当前实现、README 清理和 `0.2.1` 版本提交均已推送到 `origin/main`，最新提交以远程 `main` 为准。
 2. `moon whoami` 返回 `Logged in as zmjknn`，`moon publish` 发布 `0.2.1` 成功。
 3. GitLink 远端拒绝写入并返回 Gitea `User permission denied for writing`；其远端 `main` 仍停留在旧提交，需账号持有人在 GitLink 侧补充仓库写权限后重试。
 4. GitHub Actions 已配置三平台 CI；推送后的运行结果需以 GitHub Actions 页面为准，native Windows 本地 runtime 限制已在上文记录。

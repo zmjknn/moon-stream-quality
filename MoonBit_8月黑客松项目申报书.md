@@ -44,9 +44,9 @@ graph TD
 
 - **源码规模**：2026-08-18 排除 `_build` 后为 7,804 行 `.mbt` 源码，其中非测试源码 5,948 行、测试源码 1,856 行；规模来自可复核命令，不含构建产物。
 - **边界测试**：覆盖空输入、负时间戳、零/负配置、窗口关闭和驱逐、引号跨 chunk、坏行恢复、Schema 变化、健康窗口 rollover、checkpoint 单调性和 replay attempt cap。
-- **真实 benchmark**：`moon bench src/benchmark --target wasm-gc --release --deny-warn` 最新实测 JSONL reader 2.82 µs、传感器流水线 55.81 µs、交易流水线 224.63 µs（均值）；完整标准差、范围、运行次数和环境记录在 `docs/benchmarks/2026-08-18-wasm-gc-release.md`。
+- **真实 benchmark**：`moon bench src/benchmark --target wasm-gc --release --deny-warn` 实测 JSONL reader 2.82 µs、传感器流水线 55.81 µs、交易流水线 224.63 µs（均值）；完整标准差、范围、运行次数和环境记录在 `docs/benchmarks/2026-08-18-wasm-gc-release.md`。
 - **质量门禁**：GitHub Actions 在 Ubuntu/macOS/Windows 安装 stable 工具链，执行 `moon update`、全 target check/test、格式和 `.mbti` 漂移检查；另提供手动 Mooncakes 发布 workflow。
-- **仓库规范**：保留 `moon.mod`、`README.md`、`LICENSE`、设计/计划/基准/自查资料，默认分支为 `main`，Git 历史统一为唯一贡献者 `zmjknn`。
+- **仓库规范**：保留 `moon.mod`、`README.md`、`LICENSE`、基准和自查资料，默认分支为 `main`，Git 历史统一为唯一贡献者 `zmjknn`。
 
 ## 五、验收复现命令
 
@@ -61,4 +61,4 @@ moon bench src/benchmark --target wasm-gc --release --deny-warn
 moon run --target wasm-gc src/cli
 ```
 
-Windows 本地 native runtime 若因工具链 C 运行时出现 `rand_s` 声明错误，结项记录只采用成功的 `wasm-gc` 实测结果，并保留 native 错误作为环境跟踪项；CI 仍执行官方建议的全 target 门禁。
+Windows 本地 native runtime 若因工具链 C 运行时出现 `rand_s` 声明错误，结项记录只采用成功的 `wasm-gc` 实测结果，并保留 native 错误作为环境跟踪项；CI 仍执行全 target 门禁。

@@ -36,8 +36,22 @@ transaction_quality_pipeline  224.63 µs ±  31.11 µs   142.12 µs … 254.37 �
 Total tests: 1, passed: 1, failed: 0.
 ```
 
+## 严格自查复核运行
+
+同一命令在本次自查中再次执行，仍为通过结果，但运行时波动明显：
+
+```text
+name                         time (mean ± σ)         range (min … max)
+jsonl_reader                    3.01 µs ± 137.43 ns     2.81 µs …   3.18 µs  in 10 ×  30176 runs
+sensor_quality_pipeline        58.54 µs ±   1.06 µs    57.09 µs …  60.33 µs  in 10 ×   1632 runs
+transaction_quality_pipeline   75.78 µs ±   1.96 µs    73.12 µs …  79.20 µs  in 10 ×   1332 runs
+Total tests: 1, passed: 1, failed: 0.
+```
+
+该结果不覆盖第二次运行的历史记录；两次结果都是真实测量，后续性能比较应固定机器、工具链和 workload，并采用多次运行的统计区间。
+
 ## 解释与复测建议
 
 - `jsonl_reader` 测量结构化 JSONL 解析和错误恢复入口；`sensor_quality_pipeline`、`transaction_quality_pipeline` 测量解析后进入窗口、规则、健康观测和报告计数的完整路径。
-- 同一命令此前两次运行的均值分别为 2.53/55.92/240.02 µs 和 2.49/55.65/235.65 µs；本次结果更新为最新一次完整运行，说明交易 workload 的运行时抖动明显高于 JSONL reader，应在同一机器上重复多次再比较优化收益。
+- 同一命令此前运行的均值分别为 2.53/55.92/240.02 µs、2.49/55.65/235.65 µs 和本次复核的 3.01/58.54/75.78 µs；结果存在运行时抖动，应在同一机器上重复多次再比较优化收益，不能把单次均值当作跨平台性能承诺。
 - 当前 Windows C/native release 构建在 MoonBit runtime 的 `rand_s` 声明处失败，因此没有伪造 native 数字；本次验收记录使用成功的 `wasm-gc` release target。CI 仍保留全目标检查，native 问题作为工具链/runner 环境项单独跟踪。
