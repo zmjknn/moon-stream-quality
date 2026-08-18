@@ -126,7 +126,6 @@ find . -name '*.mbt' -not -path './_build/*' -print0 | xargs -0 cat | wc -l
 ## 相关文档
 
 - [项目申报书](OSC2026_8月黑客松项目申报书.md)
-- [结项设计与验收计划](docs/superpowers/plans/2026-08-18-stream-quality-acceptance.md)
 - [验收自查报告](docs/acceptance/2026-08-18-self-review.md)
 - [Apache License 2.0](LICENSE)
 
