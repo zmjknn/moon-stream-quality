@@ -32,7 +32,7 @@
 
 ## 推送后结果
 
-1. GitHub 授权 API 返回 `zmjknn`；`origin` 的 `main` 已更新至最终提交 `98d45c6`。
+1. GitHub 授权 API 返回 `zmjknn`；实现提交 `98d45c6` 和后续验收记录提交 `835dc73` 均已推送到 `origin/main`。
 2. `moon whoami` 返回 `Logged in as zmjknn`，`moon publish` 发布 `0.2.0` 成功。
 3. GitLink 远端拒绝写入并返回 Gitea `User permission denied for writing`；其远端 `main` 仍停留在旧提交，需账号持有人在 GitLink 侧补充仓库写权限后重试。
 4. GitHub Actions 已配置三平台 CI；推送后的运行结果需以 GitHub Actions 页面为准，native Windows 本地 runtime 限制已在上文记录。
