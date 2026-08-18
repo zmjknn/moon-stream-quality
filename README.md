@@ -4,48 +4,37 @@
 [![CI](https://github.com/zmjknn/moon-stream-quality/actions/workflows/ci.yml/badge.svg)](https://github.com/zmjknn/moon-stream-quality/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-orange.svg)](LICENSE)
 
-> 2026 年 8 月 MoonBit 官方黑客松结项项目。项目标识：`moon-stream-quality`。
-> 唯一贡献者：`zmjknn`。
+`moon-stream-quality` 是一个使用 MoonBit 编写的流式数据质量规则引擎，面向传感器数据、交易事件和访问日志等结构化事件流。项目提供输入解析、Schema 校验、规则评估、事件时间处理、运行状态监控以及失败事件重放等组件，默认以 `wasm-gc` 为主要验证目标。
 
-`moon-stream-quality` 是一个 WASM 优先的流式数据质量规则引擎，用于在传感器、交易和访问日志进入下游系统前，完成结构化解析、Schema 兼容性检查、规则校验、事件时间处理、健康观测和死信重放。
+## 项目范围
 
-## 已交付能力
+项目关注流式处理中的四类问题：
 
-- 有界事件时间窗口和单调水位线：支持 on-time、late、too-late 分类、丢弃/旁路/接收策略和窗口驱逐计数。
-- Schema 演进：比较字段新增、删除、类型变化和可空性变化，并向缺失字段应用声明式默认值。
-- 可恢复输入：分块 CSV reader、引号和转义处理、JSONL 逐行容错，单行损坏不会吞掉后续记录。
-- 质量规则与健康指标：完整性、范围、格式、跨字段规则，以及通过 p50/p95/p99 延迟、缺失、重复、Burst/Starvation 判定生成健康快照。
-- 可靠流水线：单调 checkpoint、容量受限 DLQ、重试上限、幂等 replay plan，以及 Markdown/JSON 运行报告。
-- 可复现实测：传感器、交易和访问日志三种 workload；基准代码位于 `src/benchmark`，实测记录位于 [`docs/benchmarks/2026-08-18-wasm-gc-release.md`](docs/benchmarks/2026-08-18-wasm-gc-release.md)。
+- 输入记录是否可解析，且单条错误是否会影响后续记录；
+- 字段类型、必填项和 Schema 演进是否符合约束；
+- 事件是否重复、迟到、缺失或违反业务规则；
+- 失败记录是否可以被记录、审计并在受限重试次数内重放。
 
-## 仓库结构
+## 主要组件
 
-```text
-src/core       事件、值、上下文、事件时间窗口和水位线
-src/schema     字段定义、Schema 校验与演进兼容性
-src/rules      数据质量规则、在线分位数与流健康监控
-src/parser     JSON、CSV、KV、Syslog/Apache 日志解析
-src/engine     规则注册、事件/批量流水线与观测集成
-src/pipeline   checkpoint、DLQ、重试与审计 replay
-src/report     质量评分和 Markdown/JSON 健康报告
-src/sink       告警与指标输出组件
-src/benchmark  真实 workload fixture 与 MoonBit benchmark
-src/cli        可运行的验收演示入口
-docs/          设计、计划、自查和实测基准记录
-```
+| 组件 | 作用 |
+| --- | --- |
+| `src/core` | 事件模型、值类型、处理上下文、事件时间窗口和水位线 |
+| `src/schema` | 字段定义、类型校验、默认值和 Schema 兼容性比较 |
+| `src/rules` | 完整性、范围、格式、跨字段规则，以及流健康指标 |
+| `src/parser` | JSON、CSV、KV、Syslog 和 Apache 访问日志解析；支持分块输入和逐行错误恢复 |
+| `src/engine` | 规则注册、单事件评估、批量处理和观测集成 |
+| `src/pipeline` | Checkpoint、死信队列、重试限制和 Replay Plan |
+| `src/report` | 质量评分以及 Markdown/JSON 健康报告 |
+| `src/sink` | 告警和指标输出 |
+| `src/benchmark` | 固定 workload、基准测试和可复现的质量回归数据 |
+| `src/cli` | 可运行的示例入口 |
 
-当前规模可用以下命令复核（排除 MoonBit 构建产物）：
+事件时间运行时支持 `OnTime`、`Late` 和 `TooLate` 分类，并提供 `Drop`、`SideOutput` 和 `Accept` 三种迟到事件处理策略。健康监控记录通过率、失败数、缺失数、重复数和 p50/p95/p99 延迟，并将窗口状态划分为 `Healthy`、`Degraded`、`Starved` 和 `Bursting`。
 
-```powershell
-$files = Get-ChildItem -Recurse -File -Filter *.mbt | Where-Object { $_.FullName -notmatch '\\_build\\' }
-($files | Get-Content | Measure-Object -Line).Lines
-```
+## 获取与安装
 
-2026-08-18 本地统计为 **7,804 行 MoonBit 源码**，其中非测试源码 5,948 行、测试源码 1,856 行。测试规模包括核心算法、输入边界、跨窗口行为、DLQ 重试上限和真实 workload 回归用例。
-
-## 快速开始
-
-安装最新版 stable MoonBit 工具链：
+需要安装 stable MoonBit 工具链。官方安装脚本如下：
 
 ```powershell
 # Windows PowerShell
@@ -57,39 +46,88 @@ irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
 curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
 ```
 
-在仓库根目录运行：
+确认工具链：
 
 ```bash
 moon version --all
+```
+
+## 构建与测试
+
+在仓库根目录执行：
+
+```bash
 moon update
 moon fmt --check
 moon info
 moon check --deny-warn --target all
 moon test --deny-warn --target all
+```
+
+运行 CLI 示例：
+
+```bash
 moon run --target wasm-gc src/cli
 ```
 
-Windows 本地验收优先使用 `wasm-gc`；若 native runtime 在本机工具链中出现 C 运行时差异，应保留完整错误，而不是用伪造的 native 数据替代实测数据。
+`moon info` 会生成或更新各包的 `.mbti` 接口文件。提交代码前应检查接口变化是否符合预期。CI 会在三个操作系统上执行上述检查，并验证格式化结果和生成接口没有未提交的变化。
 
-## 可复现实测基准
+## 基准测试
+
+基准测试使用固定输入和固定缺陷周期，包含 JSONL reader、120 条传感器事件和 120 条交易事件：
 
 ```bash
 moon bench src/benchmark --target wasm-gc --release --deny-warn
 ```
 
-基准 workload 固定为 JSONL reader、120 条传感器事件和 120 条交易事件，并通过 `b.keep` 防止测量路径被优化掉。最新一次真实 Windows `wasm-gc --release` 运行的结果为：JSONL reader **2.82 µs**、传感器质量流水线 **55.81 µs**、交易质量流水线 **224.63 µs**（均值；完整标准差、范围和运行次数见基准记录）。这些数字只用于同一工具链和 workload 的回归比较。
+2026-08-18 在 Windows、`wasm-gc`、`--release` 下的一次完整运行结果如下：
+
+| Workload | Mean | Standard deviation | Range |
+| --- | ---: | ---: | ---: |
+| JSONL reader | 2.82 µs | 80.04 ns | 2.72–2.94 µs |
+| Sensor quality pipeline | 55.81 µs | 1.11 µs | 54.31–57.55 µs |
+| Transaction quality pipeline | 224.63 µs | 31.11 µs | 142.12–254.37 µs |
+
+完整的运行次数、工具链版本、命令和历史对比数据见 [`docs/benchmarks/2026-08-18-wasm-gc-release.md`](docs/benchmarks/2026-08-18-wasm-gc-release.md)。这些结果用于同一机器和同一 workload 下的回归比较，不代表所有平台的绝对性能。
+
+## 源码规模
+
+统计 `.mbt` 文件时排除 `_build` 构建产物。
+
+PowerShell：
+
+```powershell
+$files = Get-ChildItem -Recurse -File -Filter *.mbt | Where-Object { $_.FullName -notmatch '\\_build\\' }
+($files | Get-Content | Measure-Object -Line).Lines
+```
+
+Linux/macOS：
+
+```bash
+find . -name '*.mbt' -not -path './_build/*' -print0 | xargs -0 cat | wc -l
+```
+
+当前统计为 7,804 行 MoonBit 源码，其中非测试源码 5,948 行、测试源码 1,856 行。测试覆盖核心算法、解析边界、跨窗口行为、Schema 变化、健康窗口重置、Checkpoint 单调性、DLQ 重试上限和真实 workload 回归。
 
 ## CI 与发布
 
-`.github/workflows/ci.yml` 在 Ubuntu、macOS、Windows 上安装 stable 工具链，并执行 `moon update`、全 target 的 `moon check`/`moon test`、格式检查和 `.mbti` 接口漂移检查。`.github/workflows/publish.yml` 只允许手动触发，使用仓库 `MOONCAKES_TOKEN` secret 发布当前模块到 Mooncakes，不在日志中输出凭据。
+- [`ci.yml`](.github/workflows/ci.yml)：在 Ubuntu、macOS 和 Windows 上安装 stable 工具链，执行全 target 的 check/test、格式检查和 `.mbti` 接口漂移检查。
+- [`publish.yml`](.github/workflows/publish.yml)：手动触发的 Mooncakes 发布流程。发布前重新执行检查和测试，通过仓库 `MOONCAKES_TOKEN` secret 认证，不在日志中输出凭据。
 
-## 验收资料
+## 模块信息
 
-- [结项设计与验收计划](docs/superpowers/plans/2026-08-18-stream-quality-acceptance.md)
-- [WASM-GC 实测基准](docs/benchmarks/2026-08-18-wasm-gc-release.md)
+- Module：`zmjknn/moon-stream-quality`
+- Version：`0.2.0`
+- Preferred target：`wasm-gc`
+- License：Apache License 2.0
+- GitHub：<https://github.com/zmjknn/moon-stream-quality>
+- Mooncakes：`zmjknn/moon-stream-quality`
+
+## 相关文档
+
 - [项目申报书](OSC2026_8月黑客松项目申报书.md)
+- [结项设计与验收计划](docs/superpowers/plans/2026-08-18-stream-quality-acceptance.md)
+- [验收自查报告](docs/acceptance/2026-08-18-self-review.md)
 - [Apache License 2.0](LICENSE)
 
-## 贡献与许可证
-
-本仓库按黑客松验收要求保留 `zmjknn` 作为唯一 Git 提交贡献者。项目采用 [Apache License 2.0](LICENSE)；如需复现实验，请使用 README 中的固定命令和 workload 配置记录结果。
+Git 提交历史中的贡献者为 `zmjknn`。项目采用 Apache License 2.0，具体条款见 [`LICENSE`](LICENSE)。
